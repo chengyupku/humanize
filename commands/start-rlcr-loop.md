@@ -1,8 +1,8 @@
 ---
 description: "Start iterative loop with Codex review"
-argument-hint: "[path/to/plan.md | --plan-file path/to/plan.md] [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS] [--track-plan-file] [--push-every-round] [--base-branch BRANCH] [--full-review-round N] [--skip-impl] [--claude-answer-codex] [--agent-teams] [--yolo] [--skip-quiz]"
+argument-hint: "[path/to/plan.md | --plan-file path/to/plan.md] [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS] [--track-plan-file] [--push-every-round] [--base-branch BRANCH] [--full-review-round N] [--skip-impl] [--codex-answer-review] [--agent-teams] [--yolo] [--skip-quiz]"
 allowed-tools:
-  - "Bash(${CLAUDE_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh:*)"
+  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh:*)"
   - "Read"
   - "Task"
   - "AskUserQuestion"
@@ -111,13 +111,13 @@ Before running the setup script, verify the user genuinely understands what the 
 If the pre-check passed (or was skipped), and the quiz passed (or was skipped or user chose to proceed), execute the setup script to initialize the loop:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh" $ARGUMENTS
+"${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh" $ARGUMENTS
 ```
 
 This command starts an iterative development loop where:
 
 1. You execute the implementation plan with task-tag routing
-   - `coding` tasks: Claude executes directly
+   - `coding` tasks: Codex executes directly
    - `analyze` tasks: execute via `/humanize:ask-codex`
 2. Write a summary of your work to the specified summary file
 3. When you try to exit, Codex reviews your summary
@@ -138,7 +138,7 @@ This loop uses a **Goal Tracker** to prevent goal drift across iterations:
 ### Key Features
 1. **Acceptance Criteria**: Each task maps to a specific AC - nothing can be "forgotten"
 2. **Task Tag Routing**: Every task should carry `coding` or `analyze` tag from plan generation
-   - `coding -> Claude`, `analyze -> Codex`
+   - `coding -> Codex`, `analyze -> Codex`
 3. **Plan Evolution Log**: If you discover the plan needs changes, document the change with justification
 4. **Explicit Deferrals**: Deferred tasks require strong justification and impact analysis
 5. **Full Alignment Checks**: At configurable intervals (default every 5 rounds: rounds 4, 9, 14, etc.), Codex conducts a comprehensive goal alignment audit. Use `--full-review-round N` to customize (min: 2)
@@ -180,7 +180,7 @@ By default, empty `.humanize/bitlesson.md` does not block `Action: none`; use `-
 
 The RLCR loop has two phases within the active loop:
 
-1. **Implementation Phase**: Work by task tags (`coding -> Claude`, `analyze -> /humanize:ask-codex`), then Codex reviews your summary
+1. **Implementation Phase**: Work by task tags (`coding -> Codex`, `analyze -> /humanize:ask-codex`), then Codex reviews your summary
 2. **Review Phase**: After COMPLETE, `codex review` checks code quality with `[P0-9]` severity markers
 
 The `--base-branch` option specifies the base branch for code review comparison. If not provided, it auto-detects from: remote default > local main > local master.

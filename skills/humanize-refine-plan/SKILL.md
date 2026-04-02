@@ -77,7 +77,7 @@ The refinement flow must:
   - `## Feasibility Hints and Suggestions`
   - `## Dependencies and Sequence`
   - `## Task Breakdown`
-  - `## Claude-Codex Deliberation`
+  - `## Executor-Reviewer Deliberation`
   - `## Pending User Decisions`
   - `## Implementation Notes`
 - Preserve optional sections when present, including the original design draft appendix

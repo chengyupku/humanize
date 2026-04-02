@@ -11,7 +11,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 
 # Source shared loop functions and template loader
 source "$SCRIPT_DIR/lib/loop-common.sh"

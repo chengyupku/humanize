@@ -4,13 +4,13 @@ This is a **mandatory checkpoint** (at configurable intervals). You must conduct
 
 ## Original Implementation Plan
 
-**IMPORTANT**: The original plan that Claude is implementing is located at:
+**IMPORTANT**: The original plan that Executor is implementing is located at:
 @{{PLAN_FILE}}
 
 You MUST read this plan file first to understand the full scope of work before conducting your review.
 
 ---
-## Claude's Work Summary
+## Executor's Work Summary
 <!-- CLAUDE's WORK SUMMARY START -->
 {{SUMMARY_CONTENT}}
 <!-- CLAUDE's WORK SUMMARY  END  -->
@@ -50,7 +50,7 @@ Critical blockers: [list if any]
 ## Part 2: Implementation Review
 
 - Conduct a deep critical review of the implementation
-- Verify Claude's claims match reality
+- Verify Executor's claims match reality
 - Identify any gaps, bugs, or incomplete work
 - Reference @{{DOCS_PATH}} for design documents
 
@@ -76,17 +76,17 @@ The project's `.humanize/rlcr/{{LOOP_TIMESTAMP}}/` directory contains the histor
 **Signs of Stagnation** (circuit breaker triggers):
 - Same issues appearing repeatedly across multiple rounds
 - No meaningful progress on Acceptance Criteria over several rounds
-- Claude making the same mistakes repeatedly
+- Executor making the same mistakes repeatedly
 - Circular discussions without resolution
 - No new code changes despite continued iterations
-- Codex giving similar feedback repeatedly without Claude addressing it
+- Codex giving similar feedback repeatedly without Executor addressing it
 
 **If development is stagnating**, write **STOP** (as a single word on its own line) as the last line of your review output @{{REVIEW_RESULT_FILE}} instead of COMPLETE.
 
 ## Part 5: Output Requirements
 
 - If issues found OR any AC is NOT MET (including deferred ACs), write your findings to @{{REVIEW_RESULT_FILE}}
-- Include specific action items for Claude to address
+- Include specific action items for Executor to address
 - **If development is stagnating** (see Part 4), write "STOP" as the last line
 - **CRITICAL**: Only write "COMPLETE" as the last line if ALL ACs from the original plan are FULLY MET with no deferrals
   - DEFERRED items are considered INCOMPLETE - do NOT output COMPLETE if any AC is deferred

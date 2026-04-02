@@ -1,6 +1,6 @@
 ---
 description: "Cancel active PR loop"
-allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/cancel-pr-loop.sh)", "Bash(${CLAUDE_PLUGIN_ROOT}/scripts/cancel-pr-loop.sh --force)"]
+allowed-tools: ["Bash(${CODEX_PLUGIN_ROOT}/scripts/cancel-pr-loop.sh)", "Bash(${CODEX_PLUGIN_ROOT}/scripts/cancel-pr-loop.sh --force)"]
 disable-model-invocation: true
 ---
 
@@ -11,7 +11,7 @@ To cancel the active PR loop:
 1. Run the cancel script:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/cancel-pr-loop.sh"
+"${CODEX_PLUGIN_ROOT}/scripts/cancel-pr-loop.sh"
 ```
 
 2. Check the first line of output:

@@ -68,7 +68,7 @@ reset_mock() {
 run_ask_codex() {
     (
         cd "$MOCK_PROJECT"
-        export CLAUDE_PROJECT_DIR="$MOCK_PROJECT"
+        export CODEX_PROJECT_DIR="$MOCK_PROJECT"
         export XDG_CACHE_HOME="$TEST_DIR/cache"
         PATH="$MOCK_BIN_DIR:$PATH" bash "$ASK_CODEX_SCRIPT" "$@"
     )
@@ -413,14 +413,14 @@ echo "--- Skill Guidance Tests ---"
 echo ""
 
 # Test: skill explicitly warns against unsafe bare $ARGUMENTS shell expansion
-if grep -Fq 'Never run this unsafe form' "$ASK_CODEX_SKILL" && grep -Fq '"${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh" $ARGUMENTS' "$ASK_CODEX_SKILL"; then
+if grep -Fq 'Never run this unsafe form' "$ASK_CODEX_SKILL" && grep -Fq '"{{HUMANIZE_RUNTIME_ROOT}}/scripts/ask-codex.sh" $ARGUMENTS' "$ASK_CODEX_SKILL"; then
     pass "skill warns against bare \$ARGUMENTS shell expansion"
 else
     fail "skill warns against bare \$ARGUMENTS shell expansion" "explicit unsafe-form warning" "missing"
 fi
 
 # Test: skill documents the safe quoted simple invocation
-if grep -Fq '"${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh" "$ARGUMENTS"' "$ASK_CODEX_SKILL"; then
+if grep -Fq '"{{HUMANIZE_RUNTIME_ROOT}}/scripts/ask-codex.sh" "$ARGUMENTS"' "$ASK_CODEX_SKILL"; then
     pass "skill quotes the question when no flags are present"
 else
     fail "skill quotes the question when no flags are present" "quoted simple invocation" "missing"

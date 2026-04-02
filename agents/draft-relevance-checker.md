@@ -38,7 +38,7 @@ When invoked, you will be given the content of a draft document. You need to:
 ## Example Outputs
 
 ```
-RELEVANT: Draft discusses adding a new slash command, which aligns with this Claude Code plugin repository.
+RELEVANT: Draft discusses adding a new slash command, which aligns with this Codex plugin repository.
 ```
 
 ```

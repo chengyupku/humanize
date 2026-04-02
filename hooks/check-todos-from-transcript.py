@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Helper script to check for incomplete tasks from Claude Code.
+Helper script to check for incomplete tasks in Codex sessions.
 
 Supports both:
-- Legacy TodoWrite tool (parsed from transcript)
-- New Task system (read directly from ~/.claude/tasks/<session_id>/)
+- Transcript TodoWrite entries
+- Optional task snapshots from ~/.codex/tasks/<session_id>/
 
 Exit codes:
   0 - All tasks are completed (or no tasks exist)
@@ -103,13 +103,12 @@ def find_incomplete_todos_from_transcript(transcript_path: Path) -> List[dict]:
 
 def find_incomplete_tasks_from_directory(session_id: str, tasks_base_dir: str = "") -> List[dict]:
     """
-    Read task files directly from ~/.claude/tasks/<session_id>/ directory.
+    Read task files directly from ~/.codex/tasks/<session_id>/ directory.
 
-    This is the authoritative source for task state, as it reflects
-    the actual in-memory task list that Claude Code maintains.
+    This is the authoritative source for task state when task snapshots are available.
 
     Args:
-        session_id: The Claude Code session ID
+        session_id: The Codex session ID
         tasks_base_dir: Optional override for tasks base directory (for testing)
 
     Returns list of incomplete items with 'status' and 'content' keys.
@@ -117,7 +116,7 @@ def find_incomplete_tasks_from_directory(session_id: str, tasks_base_dir: str = 
     if tasks_base_dir:
         tasks_dir = Path(tasks_base_dir) / session_id
     else:
-        tasks_dir = Path.home() / ".claude" / "tasks" / session_id
+        tasks_dir = Path.home() / ".codex" / "tasks" / session_id
     if not tasks_dir.exists() or not tasks_dir.is_dir():
         return []
 

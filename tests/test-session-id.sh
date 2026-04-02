@@ -54,7 +54,7 @@ git commit -q -m "Add gitignore"
 # Run setup script
 SETUP_SCRIPT="$SCRIPT_DIR/../scripts/setup-rlcr-loop.sh"
 cd "$TEST_DIR/project"
-CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
+CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
 
 # Find the state file
 STATE_FILE=$(find "$TEST_DIR/project/.humanize/rlcr" -name "state.md" -type f 2>/dev/null | head -1)
@@ -143,7 +143,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 POST_HOOK="$SCRIPT_DIR/../hooks/loop-post-bash-hook.sh"
 if [[ -f "$POST_HOOK" ]]; then
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"\\\"${MOCK_SETUP_PATH}\\\" plan.md\"},\"session_id\":\"test-session-abc-123\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     # Check if session_id was recorded
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
@@ -186,7 +186,7 @@ EOF
 
 if [[ -f "$POST_HOOK" ]]; then
     MOCK_JSON='{"tool_name":"Bash","tool_input":{"command":"echo hello"},"session_id":"different-session","transcript_path":"/tmp/test","cwd":"/tmp","permission_mode":"default","hook_event_name":"PostToolUse"}'
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     # session_id should NOT be changed
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
@@ -367,7 +367,7 @@ EOF
 
 CANCEL_SCRIPT="$SCRIPT_DIR/../scripts/cancel-rlcr-loop.sh"
 cd "$TEST_DIR/project"
-CANCEL_OUTPUT=$(CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$CANCEL_SCRIPT" 2>&1) || true
+CANCEL_OUTPUT=$(CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$CANCEL_SCRIPT" 2>&1) || true
 
 if echo "$CANCEL_OUTPUT" | grep -q "CANCELLED"; then
     pass "cancel script works regardless of session_id"
@@ -420,7 +420,7 @@ EOF
 # Zombie-loop protection: cancel only checks newest dir, which is completed.
 # Stale older loop should NOT be revived and cancelled.
 cd "$TEST_DIR/project"
-CANCEL_OUTPUT=$(CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$CANCEL_SCRIPT" 2>&1) || true
+CANCEL_OUTPUT=$(CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$CANCEL_SCRIPT" 2>&1) || true
 
 if echo "$CANCEL_OUTPUT" | grep -q "NO_LOOP"; then
     pass "cancel script reports no active loop when newest dir is completed"
@@ -487,7 +487,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 if [[ -f "$POST_HOOK" ]]; then
     # Send a non-setup Bash command - hook should NOT consume the signal
     MOCK_JSON='{"tool_name":"Bash","tool_input":{"command":"echo hello"},"session_id":"wrong-session","transcript_path":"/tmp/test","cwd":"/tmp","permission_mode":"default","hook_event_name":"PostToolUse"}'
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     # session_id should still be empty (signal not consumed)
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
@@ -515,7 +515,7 @@ fi
 if [[ -f "$POST_HOOK" ]]; then
     # Now send the actual setup command (quoted invocation) - hook should consume the signal
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"\\\"${MOCK_SETUP_PATH}\\\" plan.md\"},\"session_id\":\"leader-session-id\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ "$RECORDED_ID" == "leader-session-id" ]]; then
@@ -553,7 +553,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 if [[ -f "$POST_HOOK" ]]; then
     # session_id with special chars: slashes, ampersands, dots
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"${MOCK_SETUP_PATH} plan.md\"},\"session_id\":\"abc/def&ghi.jkl\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ "$RECORDED_ID" == "abc/def&ghi.jkl" ]]; then
@@ -806,7 +806,7 @@ git add .gitignore
 git commit -q -m "Add gitignore"
 
 cd "$TEST_DIR/project"
-CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
+CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
 
 SIGNAL_FILE="$TEST_DIR/project/.humanize/.pending-session-id"
 if [[ -f "$SIGNAL_FILE" ]]; then
@@ -848,7 +848,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 if [[ -f "$POST_HOOK" ]]; then
     # Command contains the script name as text but is NOT an actual invocation
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"echo ${MOCK_SETUP_PATH}\"},\"session_id\":\"attacker-session\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ -z "$RECORDED_ID" ]]; then
@@ -865,7 +865,7 @@ if [[ -f "$POST_HOOK" ]]; then
 
     # Also test with basename-only substring (cat setup-rlcr-loop.sh)
     MOCK_JSON='{"tool_name":"Bash","tool_input":{"command":"cat setup-rlcr-loop.sh"},"session_id":"attacker-session","transcript_path":"/tmp/test","cwd":"/tmp","permission_mode":"default","hook_event_name":"PostToolUse"}'
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ -z "$RECORDED_ID" ]]; then
@@ -905,7 +905,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 if [[ -f "$POST_HOOK" ]]; then
     # Quoted path with suffix concatenated (no space boundary after closing quote)
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"\\\"${MOCK_SETUP_PATH}\\\"foo\"},\"session_id\":\"attacker\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ -z "$RECORDED_ID" ]]; then
@@ -950,7 +950,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 if [[ -f "$POST_HOOK" ]]; then
     # Unquoted invocation (no surrounding quotes on path)
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"${MOCK_SETUP_PATH} plan.md --agent-teams\"},\"session_id\":\"unquoted-session\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ "$RECORDED_ID" == "unquoted-session" ]]; then
@@ -988,7 +988,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 if [[ -f "$POST_HOOK" ]]; then
     # Quoted invocation with tab-delimited args (tab = \t in JSON)
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"\\\"${MOCK_SETUP_PATH}\\\"\\tplan.md\"},\"session_id\":\"tab-quoted-session\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ "$RECORDED_ID" == "tab-quoted-session" ]]; then
@@ -1033,7 +1033,7 @@ printf '%s\n%s\n' "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md
 if [[ -f "$POST_HOOK" ]]; then
     # Unquoted invocation with tab-delimited args (tab = \t in JSON)
     MOCK_JSON="{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"${MOCK_SETUP_PATH}\\tplan.md --agent-teams\"},\"session_id\":\"tab-unquoted-session\",\"transcript_path\":\"/tmp/test\",\"cwd\":\"/tmp\",\"permission_mode\":\"default\",\"hook_event_name\":\"PostToolUse\"}"
-    echo "$MOCK_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
+    echo "$MOCK_JSON" | CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$POST_HOOK" > /dev/null 2>&1 || true
 
     RECORDED_ID=$(grep "^session_id:" "$TEST_DIR/project/.humanize/rlcr/2026-01-01_00-00-00/state.md" | sed 's/session_id: *//')
     if [[ "$RECORDED_ID" == "tab-unquoted-session" ]]; then

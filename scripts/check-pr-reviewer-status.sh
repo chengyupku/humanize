@@ -11,7 +11,7 @@
 # Output (JSON):
 #   {
 #     "case": 1-5,
-#     "reviewers_commented": ["claude"],
+#     "reviewers_commented": ["codex"],
 #     "reviewers_missing": ["codex"],
 #     "latest_commit_sha": "abc123",
 #     "latest_commit_at": "2026-01-18T12:00:00Z",
@@ -88,9 +88,7 @@ fi
 # Bot Name Mapping
 # ========================================
 
-# Map bot names to GitHub comment author names:
-# - claude -> claude[bot]
-# - codex -> chatgpt-codex-connector[bot]
+# Map bot names to GitHub comment author names.
 map_bot_to_author() {
     local bot="$1"
     case "$bot" in

@@ -1,6 +1,6 @@
 ## Goal Tracker Update Requests (YOUR RESPONSIBILITY)
 
-**Important**: Claude cannot directly modify `goal-tracker.md` after Round 0. If Claude's summary contains a "Goal Tracker Update Request" section, YOU must:
+**Important**: Executor cannot directly modify `goal-tracker.md` after Round 0. If Executor's summary contains a "Goal Tracker Update Request" section, YOU must:
 
 1. **Evaluate the request**: Is the change justified? Does it serve the Ultimate Goal?
 2. **If approved**: Update @{{GOAL_TRACKER_FILE}} yourself with the requested changes:

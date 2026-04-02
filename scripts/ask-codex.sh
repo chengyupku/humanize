@@ -9,7 +9,7 @@
 #   ask-codex.sh [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS] [question...]
 #
 # Output:
-#   stdout: Codex's response (for Claude to read)
+#   stdout: Codex's response (for Codex to read)
 #   stderr: Status/debug info (model, effort, log paths)
 #
 # Storage:
@@ -192,7 +192,7 @@ fi
 if git rev-parse --show-toplevel &>/dev/null; then
     PROJECT_ROOT=$(git rev-parse --show-toplevel)
 else
-    PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+    PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 fi
 
 # ========================================
@@ -406,5 +406,5 @@ echo "ask-codex: response saved to $SKILL_DIR/output.md" >&2
 # Output Response
 # ========================================
 
-# Output Codex's response to stdout (clean output for Claude to read)
+# Output Codex's response to stdout (clean output for Codex to read)
 cat "$CODEX_STDOUT_FILE"

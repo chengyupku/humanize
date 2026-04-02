@@ -2,7 +2,7 @@
 
 You cannot write to `round-*-prompt.md` files.
 
-**Prompt files contain instructions FROM Codex TO you (Claude).**
+**Prompt files contain instructions FROM Codex TO you (Codex).**
 
 You cannot modify your own instructions. Your job is to:
 1. Read the current round's prompt file for instructions

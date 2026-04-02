@@ -84,7 +84,7 @@ Implement and validate feature behavior.
 create_mock_codex "$TEST_DIR/repo-routing/bin"
 
 cd "$TEST_DIR/repo-routing"
-PATH="$TEST_DIR/repo-routing/bin:$PATH" CLAUDE_PROJECT_DIR="$TEST_DIR/repo-routing" bash "$SETUP_SCRIPT" plans/plan.md > /dev/null 2>&1
+PATH="$TEST_DIR/repo-routing/bin:$PATH" CODEX_PROJECT_DIR="$TEST_DIR/repo-routing" bash "$SETUP_SCRIPT" plans/plan.md > /dev/null 2>&1
 
 PROMPT_FILE=$(find "$TEST_DIR/repo-routing/.humanize/rlcr" -name "round-0-prompt.md" -type f | head -1)
 GOAL_TRACKER_FILE=$(find "$TEST_DIR/repo-routing/.humanize/rlcr" -name "goal-tracker.md" -type f | head -1)
@@ -203,7 +203,7 @@ CONTINUE"
 export PATH="$TEST_DIR/hook-routing/bin:$PATH"
 export XDG_CACHE_HOME="$TEST_DIR/hook-routing/.cache"
 HOOK_INPUT='{"stop_hook_active": false, "transcript": [], "session_id": ""}'
-echo "$HOOK_INPUT" | CLAUDE_PROJECT_DIR="$TEST_DIR/hook-routing" bash "$STOP_HOOK" > /dev/null 2>&1 || true
+echo "$HOOK_INPUT" | CODEX_PROJECT_DIR="$TEST_DIR/hook-routing" bash "$STOP_HOOK" > /dev/null 2>&1 || true
 NEXT_PROMPT="$TEST_DIR/hook-routing/.humanize/rlcr/2024-02-01_12-00-00/round-1-prompt.md"
 
 if [[ -f "$NEXT_PROMPT" ]] && grep -q "## Task Tag Routing Reminder" "$NEXT_PROMPT"; then

@@ -2,7 +2,7 @@
 name: ask-codex
 description: Consult Codex as an independent expert. Sends a question or task to codex exec and returns the response.
 argument-hint: "[--codex-model MODEL:EFFORT] [--codex-timeout SECONDS] [question or task]"
-allowed-tools: "Bash(${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh:*)"
+allowed-tools: "Bash({{HUMANIZE_RUNTIME_ROOT}}/scripts/ask-codex.sh:*)"
 ---
 
 # Ask Codex
@@ -16,7 +16,7 @@ Do not pass free-form user text to the shell unquoted. The question or task may 
 If the user only supplied a question or task, execute:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh" "$ARGUMENTS"
+"{{HUMANIZE_RUNTIME_ROOT}}/scripts/ask-codex.sh" "$ARGUMENTS"
 ```
 
 If the user supplied flags such as `--codex-model` or `--codex-timeout`, reconstruct the command so those flags remain separate shell arguments and the remaining free-form question is passed as one quoted final argument.
@@ -24,13 +24,13 @@ If the user supplied flags such as `--codex-model` or `--codex-timeout`, reconst
 Example:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh" --codex-model gpt-5.4:high "Review the following round summary (M4)..."
+"{{HUMANIZE_RUNTIME_ROOT}}/scripts/ask-codex.sh" --codex-model gpt-5.4:high "Review the following round summary (M4)..."
 ```
 
 Never run this unsafe form:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh" $ARGUMENTS
+"{{HUMANIZE_RUNTIME_ROOT}}/scripts/ask-codex.sh" $ARGUMENTS
 ```
 
 because the shell will re-parse the question text and can fail before `ask-codex.sh` starts.

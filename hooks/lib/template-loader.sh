@@ -147,7 +147,7 @@ load_and_render() {
 }
 
 # Append content from another template file
-# Usage: append_template "$base_content" "$TEMPLATE_DIR" "claude/post-alignment.md"
+# Usage: append_template "$base_content" "$TEMPLATE_DIR" "executor/post-alignment.md"
 append_template() {
     local base_content="$1"
     local template_dir="$2"
@@ -213,7 +213,7 @@ validate_template_dir() {
         return 1
     fi
 
-    if [[ ! -d "$template_dir/block" ]] || [[ ! -d "$template_dir/codex" ]] || [[ ! -d "$template_dir/claude" ]]; then
+    if [[ ! -d "$template_dir/block" ]] || [[ ! -d "$template_dir/codex" ]] || [[ ! -d "$template_dir/executor" ]]; then
         echo "ERROR: Template directory missing subdirectories: $template_dir" >&2
         return 1
     fi

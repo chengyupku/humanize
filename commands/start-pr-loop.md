@@ -1,7 +1,7 @@
 ---
 description: "Start PR review loop with bot monitoring"
-argument-hint: "--claude|--codex [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS]"
-allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/setup-pr-loop.sh:*)"]
+argument-hint: "--codex [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS]"
+allowed-tools: ["Bash(${CODEX_PLUGIN_ROOT}/scripts/setup-pr-loop.sh:*)"]
 ---
 
 # Start PR Loop
@@ -9,7 +9,7 @@ allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/setup-pr-loop.sh:*)"]
 Execute the setup script to initialize the PR review loop:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/setup-pr-loop.sh" $ARGUMENTS
+"${CODEX_PLUGIN_ROOT}/scripts/setup-pr-loop.sh" $ARGUMENTS
 ```
 
 This command starts a PR review loop that:
@@ -24,7 +24,6 @@ This command starts a PR review loop that:
 ## Bot Flags (Required)
 
 At least one bot flag is required:
-- `--claude` - Monitor reviews from claude[bot] (trigger with @claude)
 - `--codex` - Monitor reviews from chatgpt-codex-connector[bot] (trigger with @codex)
 
 ## Comment Prioritization
@@ -43,7 +42,7 @@ Comments are processed in this order:
 6. If issues remain, receive feedback and continue
 7. If all bots approve, loop ends
 
-**Note:** The setup script provides the exact mention string to use (e.g., `@claude @codex`).
+**Note:** The setup script provides the exact mention string to use (for example, `@codex`).
 Use whatever bot mentions are shown in the initial prompt - they match the flags you provided.
 
 ## Important Rules

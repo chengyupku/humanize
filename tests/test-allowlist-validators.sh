@@ -130,7 +130,7 @@ echo "=== Test: Write Validator Allowlist ==="
 echo ""
 
 setup_test_loop
-export CLAUDE_PROJECT_DIR="$TEST_DIR"
+export CODEX_PROJECT_DIR="$TEST_DIR"
 
 # Test 8: Write validator allows round-1-todos.md in active loop dir
 echo "Test 8: Write validator allows round-1-todos.md"

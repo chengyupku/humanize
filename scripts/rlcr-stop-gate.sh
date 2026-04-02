@@ -18,11 +18,11 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 HUMANIZE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 HOOK_SCRIPT="$HUMANIZE_ROOT/hooks/loop-codex-stop-hook.sh"
 
-SESSION_ID="${CLAUDE_SESSION_ID:-}"
-TRANSCRIPT_PATH="${CLAUDE_TRANSCRIPT_PATH:-}"
+SESSION_ID="${CODEX_SESSION_ID:-}"
+TRANSCRIPT_PATH="${CODEX_TRANSCRIPT_PATH:-}"
 PRINT_JSON="false"
 
 usage() {
@@ -83,7 +83,7 @@ fi
 
 # Build hook input JSON while omitting empty fields.
 # Include standard Stop hook fields so the underlying hook sees the same schema
-# as a real Claude Code Stop event (hook_event_name, stop_hook_active, cwd).
+# as a real Codex Stop event (hook_event_name, stop_hook_active, cwd).
 HOOK_INPUT=$(jq -n \
     --arg session_id "$SESSION_ID" \
     --arg transcript_path "$TRANSCRIPT_PATH" \
@@ -99,7 +99,7 @@ HOOK_INPUT=$(jq -n \
 # Capture hook exit code explicitly to map non-zero to exit 20 (wrapper error)
 # instead of letting set -e propagate the raw hook exit code.
 HOOK_EXIT=0
-HOOK_OUTPUT="$(printf '%s' "$HOOK_INPUT" | CLAUDE_PROJECT_DIR="$PROJECT_ROOT" "$HOOK_SCRIPT")" || HOOK_EXIT=$?
+HOOK_OUTPUT="$(printf '%s' "$HOOK_INPUT" | CODEX_PROJECT_DIR="$PROJECT_ROOT" "$HOOK_SCRIPT")" || HOOK_EXIT=$?
 
 if [[ $HOOK_EXIT -ne 0 ]]; then
     echo "Error: Hook script exited with code $HOOK_EXIT" >&2

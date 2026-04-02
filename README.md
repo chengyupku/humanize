@@ -4,7 +4,7 @@
 
 > Derived from the [GAAC (GitHub-as-a-Context)](https://github.com/SihaoLiu/gaac) project.
 
-A Claude Code plugin that provides iterative development with independent AI review. Build with confidence through continuous feedback loops.
+A Codex-first plugin and skill bundle that provides iterative development with independent AI review. Build with confidence through continuous feedback loops.
 
 ## What is RLCR?
 
@@ -13,7 +13,7 @@ A Claude Code plugin that provides iterative development with independent AI rev
 ## Core Concepts
 
 - **Iteration over Perfection** -- Instead of expecting perfect output in one shot, Humanize leverages continuous feedback loops where issues are caught early and refined incrementally.
-- **One Build + One Review** -- Claude implements, Codex independently reviews. No blind spots.
+- **One Build + One Review** -- Codex implements, an independent Codex review pass verifies progress. No blind spots.
 - **Ralph Loop with Swarm Mode** -- Iterative refinement continues until all acceptance criteria are met. Optionally parallelize with Agent Teams.
 - **Begin with the End in Mind** -- Before the loop starts, Humanize verifies that *you* understand the plan you are about to execute. The human must remain the architect. ([Details](docs/usage.md#begin-with-the-end-in-mind))
 
@@ -23,20 +23,11 @@ A Claude Code plugin that provides iterative development with independent AI rev
   <img src="docs/images/rlcr-workflow.svg" alt="RLCR Workflow" width="680"/>
 </p>
 
-The loop has two phases: **Implementation** (Claude works, Codex reviews summaries) and **Code Review** (Codex checks code quality with severity markers). Issues feed back into implementation until resolved.
+The loop has two phases: **Implementation** (Codex works, Codex reviews summaries) and **Code Review** (Codex checks code quality with severity markers). Issues feed back into implementation until resolved.
 
 ## Install
 
-```bash
-# Add humania marketplace
-/plugin marketplace add humania-org/humanize
-# If you want to use development branch for experimental features
-/plugin marketplace add humania-org/humanize#dev
-# Then install humanize plugin
-/plugin install humanize@humania
-```
-
-Requires [codex CLI](https://github.com/openai/codex) for review. See the full [Installation Guide](docs/install-for-claude.md) for prerequisites and alternative setup options.
+See [Install for Codex](docs/install-for-codex.md) for skill-runtime setup or [Install for Codex Plugin](docs/install-for-codex-plugin.md) for repo-local plugin metadata and hook layout.
 
 ## Quick Start
 
@@ -70,8 +61,8 @@ Requires [codex CLI](https://github.com/openai/codex) for review. See the full [
 ## Documentation
 
 - [Usage Guide](docs/usage.md) -- Commands, options, environment variables
-- [Install for Claude Code](docs/install-for-claude.md) -- Full installation instructions
 - [Install for Codex](docs/install-for-codex.md) -- Codex skill runtime setup
+- [Install for Codex Plugin](docs/install-for-codex-plugin.md) -- Repo-local plugin metadata and hook layout
 - [Install for Kimi](docs/install-for-kimi.md) -- Kimi CLI skill setup
 - [Configuration](docs/usage.md#configuration) -- Shared config hierarchy and override rules
 - [Bitter Lesson Workflow](docs/bitlesson.md) -- Project memory, selector routing, and delta validation

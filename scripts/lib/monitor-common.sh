@@ -342,7 +342,7 @@ get_pr_loop_phase() {
 }
 
 # Get human-readable description for PR loop phase
-# Usage: get_pr_loop_phase_display "waiting_reviewer" "claude,codex"
+# Usage: get_pr_loop_phase_display "waiting_reviewer" "codex"
 get_pr_loop_phase_display() {
     local phase="$1"
     local active_bots="$2"

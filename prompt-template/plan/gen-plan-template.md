@@ -69,7 +69,7 @@ Example: "The implementation includes core feature X with basic validation"
 ## Task Breakdown
 
 Each task must include exactly one routing tag:
-- `coding`: implemented by Claude
+- `coding`: implemented by Codex
 - `analyze`: executed via Codex (`/humanize:ask-codex`)
 
 | Task ID | Description | Target AC | Tag (`coding`/`analyze`) | Depends On |
@@ -77,13 +77,13 @@ Each task must include exactly one routing tag:
 | task1 | <...> | AC-1 | coding | - |
 | task2 | <...> | AC-2 | analyze | task1 |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 
 ### Agreements
 - <Point both sides agree on>
 
 ### Resolved Disagreements
-- <Topic>: Claude vs Codex summary, chosen resolution, and rationale
+- <Topic>: Executor vs Reviewer summary, chosen resolution, and rationale
 
 ### Convergence Status
 - Final Status: `converged` or `partially_converged`
@@ -91,8 +91,8 @@ Each task must include exactly one routing tag:
 ## Pending User Decisions
 
 - DEC-1: <Decision topic>
-  - Claude Position: <...>
-  - Codex Position: <...>
+  - Executor Position: <...>
+  - Reviewer Position: <...>
   - Tradeoff Summary: <...>
   - Decision Status: `PENDING` or `<User's final decision>`
 

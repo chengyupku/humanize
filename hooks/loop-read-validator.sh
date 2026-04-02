@@ -2,14 +2,14 @@
 #
 # PreToolUse Hook: Validate Read access for RLCR loop and PR loop files
 #
-# Blocks Claude from reading:
+# Blocks Codex from reading:
 # - Wrong round's prompt/summary files (outdated information)
 # - Round files from wrong locations (not in .humanize/rlcr/)
 # - Round files from old session directories
 # - Todos files (should use native Task tools instead)
 #
 # PR loop files (.humanize/pr-loop/) are generally allowed to read
-# to give Claude access to comments, prompts, and feedback.
+# to give Codex access to comments, prompts, and feedback.
 #
 
 set -euo pipefail
@@ -56,7 +56,7 @@ HOOK_SESSION_ID=$(extract_session_id "$HOOK_INPUT")
 # ========================================
 
 if is_round_file_type "$FILE_PATH_LOWER" "todos"; then
-    PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+    PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
     LOOP_BASE_DIR="$PROJECT_ROOT/.humanize/rlcr"
     LOOP_DIR=$(find_active_loop "$LOOP_BASE_DIR" "$HOOK_SESSION_ID")
     if [[ -z "$LOOP_DIR" ]] || ! is_allowlisted_file "$FILE_PATH" "$LOOP_DIR"; then
@@ -73,14 +73,14 @@ if ! is_round_file_type "$FILE_PATH_LOWER" "summary" && ! is_round_file_type "$F
     exit 0
 fi
 
-CLAUDE_FILENAME=$(basename "$FILE_PATH")
+TARGET_FILENAME=$(basename "$FILE_PATH")
 IN_HUMANIZE_LOOP_DIR=$(is_in_humanize_loop_dir "$FILE_PATH" && echo "true" || echo "false")
 
 # ========================================
 # Find Active Loop and Current Round
 # ========================================
 
-PROJECT_ROOT="${PROJECT_ROOT:-${CLAUDE_PROJECT_DIR:-$(pwd)}}"
+PROJECT_ROOT="${PROJECT_ROOT:-${CODEX_PROJECT_DIR:-$(pwd)}}"
 LOOP_BASE_DIR="${LOOP_BASE_DIR:-$PROJECT_ROOT/.humanize/rlcr}"
 ACTIVE_LOOP_DIR="${LOOP_DIR:-$(find_active_loop "$LOOP_BASE_DIR" "$HOOK_SESSION_ID")}"
 
@@ -102,8 +102,8 @@ CURRENT_ROUND="$STATE_CURRENT_ROUND"
 # Extract Round Number and File Type
 # ========================================
 
-CLAUDE_ROUND=$(extract_round_number "$CLAUDE_FILENAME")
-if [[ -z "$CLAUDE_ROUND" ]]; then
+TARGET_ROUND=$(extract_round_number "$TARGET_FILENAME")
+if [[ -z "$TARGET_ROUND" ]]; then
     exit 0
 fi
 
@@ -135,14 +135,14 @@ fi
 # Validate Round Number
 # ========================================
 
-if [[ "$CLAUDE_ROUND" != "$CURRENT_ROUND" ]] && ! is_allowlisted_file "$FILE_PATH" "$ACTIVE_LOOP_DIR"; then
+if [[ "$TARGET_ROUND" != "$CURRENT_ROUND" ]] && ! is_allowlisted_file "$FILE_PATH" "$ACTIVE_LOOP_DIR"; then
     FALLBACK="# Wrong Round File
 
-You tried to read round-{{CLAUDE_ROUND}}-{{FILE_TYPE}}.md but current round is **{{CURRENT_ROUND}}**.
+You tried to read round-{{TARGET_ROUND}}-{{FILE_TYPE}}.md but current round is **{{CURRENT_ROUND}}**.
 
 Read from: {{ACTIVE_LOOP_DIR}}"
     load_and_render_safe "$TEMPLATE_DIR" "block/wrong-round-file.md" "$FALLBACK" \
-        "CLAUDE_ROUND=$CLAUDE_ROUND" \
+        "TARGET_ROUND=$TARGET_ROUND" \
         "FILE_TYPE=$FILE_TYPE" \
         "CURRENT_ROUND=$CURRENT_ROUND" \
         "ACTIVE_LOOP_DIR=$ACTIVE_LOOP_DIR" \
@@ -154,7 +154,7 @@ fi
 # Validate Directory Path
 # ========================================
 
-CORRECT_PATH="$ACTIVE_LOOP_DIR/$CLAUDE_FILENAME"
+CORRECT_PATH="$ACTIVE_LOOP_DIR/$TARGET_FILENAME"
 
 if [[ "$FILE_PATH" != "$CORRECT_PATH" ]]; then
     FALLBACK="# Wrong Directory Path

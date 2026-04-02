@@ -192,13 +192,13 @@ run_cancel_tests() {
     # Test: No loop returns NO_LOOP
     test_cancel_no_loop() {
         cd "$TEST_DIR"
-        # Export CLAUDE_PROJECT_DIR to ensure cancel script looks in test dir
-        export CLAUDE_PROJECT_DIR="$TEST_DIR"
+        # Export CODEX_PROJECT_DIR to ensure cancel script looks in test dir
+        export CODEX_PROJECT_DIR="$TEST_DIR"
         local output
         local exit_code
         output=$("$CANCEL_SCRIPT" 2>&1) || exit_code=$?
         exit_code=${exit_code:-0}
-        unset CLAUDE_PROJECT_DIR
+        unset CODEX_PROJECT_DIR
 
         if [[ $exit_code -eq 1 ]] && echo "$output" | grep -q "NO_LOOP"; then
             pass "T-NEG-4: No active loop returns NO_LOOP"
@@ -211,8 +211,8 @@ run_cancel_tests() {
     # Test: Cancel works with active loop
     test_cancel_active_loop() {
         cd "$TEST_DIR"
-        # Export CLAUDE_PROJECT_DIR to ensure cancel script looks in test dir
-        export CLAUDE_PROJECT_DIR="$TEST_DIR"
+        # Export CODEX_PROJECT_DIR to ensure cancel script looks in test dir
+        export CODEX_PROJECT_DIR="$TEST_DIR"
 
         # Create mock loop directory
         local timestamp="2026-01-18_12-00-00"
@@ -231,7 +231,7 @@ EOF
         local exit_code
         output=$("$CANCEL_SCRIPT" 2>&1) || exit_code=$?
         exit_code=${exit_code:-0}
-        unset CLAUDE_PROJECT_DIR
+        unset CODEX_PROJECT_DIR
 
         if [[ $exit_code -eq 0 ]] && echo "$output" | grep -q "CANCELLED"; then
             if [[ -f "$loop_dir/cancel-state.md" ]] && [[ ! -f "$loop_dir/state.md" ]]; then

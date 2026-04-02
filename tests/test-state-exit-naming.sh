@@ -61,7 +61,7 @@ review_started: false
 ---
 EOF
 
-export CLAUDE_PROJECT_DIR="$TEST_DIR"
+export CODEX_PROJECT_DIR="$TEST_DIR"
 
 # Source the loop-common.sh to get find_active_loop
 source "$PROJECT_ROOT/hooks/lib/loop-common.sh"

@@ -208,7 +208,7 @@ fetch_with_retry() {
 }
 
 # Fetch issue comments (general PR comments)
-# claude[bot] typically posts here
+# Remote reviewer bots may post here
 fetch_with_retry "repos/$REPO_OWNER/$REPO_NAME/issues/$PR_NUMBER/comments" "$ISSUE_COMMENTS_FILE" "issue comments"
 
 # Fetch PR review comments (inline code comments)
@@ -381,7 +381,6 @@ else
     # Second pass: bot comments
     if [[ -n "$ACTIVE_BOTS" ]]; then
         # Map bot names to GitHub comment author names:
-        # - claude -> claude[bot]
         # - codex -> chatgpt-codex-connector[bot]
         map_bot_to_author() {
             local bot="$1"

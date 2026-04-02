@@ -2,9 +2,9 @@
 description: "Generate implementation plan from draft document"
 argument-hint: "--input <path/to/draft.md> --output <path/to/plan.md> [--auto-start-rlcr-if-converged] [--discussion|--direct]"
 allowed-tools:
-  - "Bash(${CLAUDE_PLUGIN_ROOT}/scripts/validate-gen-plan-io.sh:*)"
-  - "Bash(${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh:*)"
-  - "Bash(${CLAUDE_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh:*)"
+  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/validate-gen-plan-io.sh:*)"
+  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/ask-codex.sh:*)"
+  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh:*)"
   - "Read"
   - "Glob"
   - "Grep"
@@ -37,9 +37,9 @@ This command transforms a user's draft document into a well-structured implement
 2. **Load Project Config**: Resolve merged Humanize config defaults for `alternative_plan_language` and `gen_plan_mode`
 3. **IO Validation**: Validate input and output paths
 4. **Relevance Check**: Verify draft is relevant to the repository
-5. **Codex First-Pass Analysis**: Use one planning Codex before Claude synthesizes plan details
-6. **Claude Candidate Plan (v1)**: Claude builds an initial plan from draft + Codex findings
-7. **Iterative Convergence Loop**: Claude and a second Codex iteratively challenge/refine plan reasonability
+5. **Codex First-Pass Analysis**: Use one planning Codex before the executor synthesizes plan details
+6. **Executor Candidate Plan (v1)**: The executor builds an initial plan from draft + Codex findings
+7. **Iterative Convergence Loop**: The executor and a second Codex iteratively challenge/refine plan reasonability
 8. **Issue and Disagreement Resolution**: Resolve unresolved opposite opinions (or skip manual review if converged, auto-start mode is enabled, and `GEN_PLAN_MODE=discussion`)
 9. **Final Plan Generation**: Generate the converged structured plan.md with task routing tags
 10. **Write and Complete**: Write output file, optionally write translated language variant, optionally auto-start implementation, and report results
@@ -61,14 +61,14 @@ Parse `$ARGUMENTS` and set:
 
 ## Phase 0.5: Load Project Config
 
-After setting execution mode flags, resolve configuration using `${CLAUDE_PLUGIN_ROOT}/scripts/lib/config-loader.sh`. Reuse that behavior; do not read `.humanize/config.json` directly.
+After setting execution mode flags, resolve configuration using `${CODEX_PLUGIN_ROOT}/scripts/lib/config-loader.sh`. Reuse that behavior; do not read `.humanize/config.json` directly.
 
 ### Config Merge Semantics
 
-1. Source `${CLAUDE_PLUGIN_ROOT}/scripts/lib/config-loader.sh`.
-2. Call `load_merged_config "${CLAUDE_PLUGIN_ROOT}" "${PROJECT_ROOT}"` to obtain `MERGED_CONFIG_JSON`, where `PROJECT_ROOT` is the repository root where the command was invoked.
+1. Source `${CODEX_PLUGIN_ROOT}/scripts/lib/config-loader.sh`.
+2. Call `load_merged_config "${CODEX_PLUGIN_ROOT}" "${PROJECT_ROOT}"` to obtain `MERGED_CONFIG_JSON`, where `PROJECT_ROOT` is the repository root where the command was invoked.
 3. `load_merged_config` merges these layers in order:
-   - Required default config: `${CLAUDE_PLUGIN_ROOT}/config/default_config.json`
+   - Required default config: `${CODEX_PLUGIN_ROOT}/config/default_config.json`
    - Optional user config: `${XDG_CONFIG_HOME:-$HOME/.config}/humanize/config.json`
    - Optional project config: `${HUMANIZE_CONFIG:-$PROJECT_ROOT/.humanize/config.json}`
 4. Later layers override earlier layers. Malformed optional JSON objects are warnings and ignored. A malformed required default config, missing `jq`, or any other fatal `load_merged_config` failure is a configuration error and must stop the command.
@@ -134,7 +134,7 @@ Also detect whether `alternative_plan_language` is explicitly present in `MERGED
 Execute the validation script with the provided arguments:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/validate-gen-plan-io.sh" $ARGUMENTS
+"${CODEX_PLUGIN_ROOT}/scripts/validate-gen-plan-io.sh" $ARGUMENTS
 ```
 
 **Handle exit codes:**
@@ -163,7 +163,7 @@ After IO validation passes, check if the draft is relevant to this repository.
    Task tool parameters:
    - model: "haiku"
    - prompt: Include the draft content and ask the agent to:
-     1. Explore the repository structure (README, CLAUDE.md, main files)
+     1. Explore the repository structure (README, AGENTS.md, main files)
      2. Analyze if the draft content relates to this repository
      3. Return either `RELEVANT: <reason>` or `NOT_RELEVANT: <reason>`
    ```
@@ -183,13 +183,13 @@ After IO validation passes, check if the draft is relevant to this repository.
 
 ## Phase 3: Codex First-Pass Analysis
 
-After relevance check, invoke Codex BEFORE Claude plan synthesis.
+After relevance check, invoke Codex BEFORE executor plan synthesis.
 
-This Codex pass is the first planning analysis before Claude synthesizes plan details.
+This Codex pass is the first planning analysis before the executor synthesizes plan details.
 
 1. Run:
    ```bash
-   "${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh" "<structured prompt>"
+   "${CODEX_PLUGIN_ROOT}/scripts/ask-codex.sh" "<structured prompt>"
    ```
 2. The structured prompt MUST include:
    - Repository context (project purpose, relevant files)
@@ -202,18 +202,18 @@ This Codex pass is the first planning analysis before Claude synthesizes plan de
    - `ALTERNATIVE_DIRECTIONS:` viable alternatives with tradeoffs
    - `QUESTIONS_FOR_USER:` questions that need explicit human decisions
    - `CANDIDATE_CRITERIA:` candidate acceptance criteria suggestions
-4. Preserve this output as **Codex Analysis v1** and feed it into Claude planning.
+4. Preserve this output as **Codex Analysis v1** and feed it into executor planning.
 5. Record a concise planning summary from this analysis.
 
 ### Codex Availability Handling
 
 If `ask-codex.sh` fails (missing Codex CLI, timeout, or runtime error), use AskUserQuestion and let the user choose:
 - Retry with updated Codex settings/environment
-- Continue with Claude-only planning (explicitly note reduced cross-review confidence in plan output)
+- Continue with executor-only planning (explicitly note reduced cross-review confidence in plan output)
 
 ---
 
-## Phase 4: Claude Candidate Plan (v1)
+## Phase 4: Executor Candidate Plan (v1)
 
 Use draft content + Codex Analysis v1 to produce an initial candidate plan and issue map.
 
@@ -252,18 +252,18 @@ Use the Task tool with `subagent_type: "Explore"` to investigate:
 
 ---
 
-## Phase 5: Iterative Convergence Loop (Claude <-> Second Codex)
+## Phase 5: Iterative Convergence Loop (Executor <-> Second Codex)
 
 If `GEN_PLAN_MODE=direct`, skip this entire phase. The plan proceeds directly from candidate plan v1 (Phase 4) to Phase 6 without convergence rounds. Since no convergence rounds or second-pass review occurred, set `PLAN_CONVERGENCE_STATUS=partially_converged` and `HUMAN_REVIEW_REQUIRED=true` (direct mode must NOT satisfy `--auto-start-rlcr-if-converged` conditions).
 
-After Claude candidate plan v1 is ready, run iterative challenge/refine rounds with a SECOND Codex pass.
+After Executor candidate plan v1 is ready, run iterative challenge/refine rounds with a SECOND Codex pass.
 
 ### Convergence Round Steps
 
 1. **Second Codex Reasonability Review**
    - Run:
      ```bash
-     "${CLAUDE_PLUGIN_ROOT}/scripts/ask-codex.sh" "<review current candidate plan>"
+     "${CODEX_PLUGIN_ROOT}/scripts/ask-codex.sh" "<review current candidate plan>"
      ```
    - Prompt MUST include current candidate plan, prior disagreements, and unresolved items
    - Require output format:
@@ -272,13 +272,13 @@ After Claude candidate plan v1 is ready, run iterative challenge/refine rounds w
      - `REQUIRED_CHANGES:` must-fix items before convergence
      - `OPTIONAL_IMPROVEMENTS:` non-blocking improvements
      - `UNRESOLVED:` opposite opinions needing user decisions
-2. **Claude Revision**
-   - Claude updates the candidate plan to address `REQUIRED_CHANGES`
-   - Claude documents accepted/rejected suggestions with rationale
+2. **Executor Revision**
+   - Executor updates the candidate plan to address `REQUIRED_CHANGES`
+   - Executor documents accepted/rejected suggestions with rationale
 3. **Convergence Assessment**
    - Update a per-round convergence matrix:
      - Topic
-     - Claude position
+     - Executor position
      - Second Codex position
      - Resolution status (`resolved`, `needs_user_decision`, `deferred`)
      - Round-to-round delta
@@ -318,10 +318,10 @@ Before proceeding (regardless of `HUMAN_REVIEW_REQUIRED`), consolidate all user-
 1. Extract `QUESTIONS_FOR_USER` items from Codex Analysis v1 (Phase 3)
 2. Extract items with status `needs_user_decision` from the final convergence matrix (Phase 5) — use the last round's state, not intermediate rounds
 3. Deduplicate: if the same topic appears in both sources, merge into one entry
-4. For each collected item, check if it was substantively resolved during Phase 4-5 plan refinement (i.e., Claude addressed it and second Codex agreed in a subsequent round). Remove only items with clear evidence of resolution.
+4. For each collected item, check if it was substantively resolved during Phase 4-5 plan refinement (i.e., Executor addressed it and second Codex agreed in a subsequent round). Remove only items with clear evidence of resolution.
 5. Write all remaining unresolved items into the plan's `## Pending User Decisions` section. Use `DEC-N` identifiers. Set `Decision Status` to `PENDING`.
-   - For Claude-vs-Codex disagreements: fill `Claude Position`, `Codex Position`, and `Tradeoff Summary`
-   - For open questions (no opposing positions): set `Claude Position` to Claude's tentative answer (if any), `Codex Position` to `N/A - open question`, and `Tradeoff Summary` to the question's context
+   - For Executor-vs-Codex disagreements: fill `Executor Position`, `Reviewer Position`, and `Tradeoff Summary`
+   - For open questions (no opposing positions): set `Executor Position` to Executor's tentative answer (if any), `Reviewer Position` to `N/A - open question`, and `Tradeoff Summary` to the question's context
 
 This ensures:
 - When `HUMAN_REVIEW_REQUIRED=true`: items are visible for Steps 2-4 user resolution
@@ -329,7 +329,7 @@ This ensures:
 
 ### Step 2: Resolve Analysis Issues (when manual review is required)
 
-If any issues are found during Codex-first analysis, Claude analysis, or convergence loop, use AskUserQuestion to clarify with the user.
+If any issues are found during Codex-first analysis, Executor analysis, or convergence loop, use AskUserQuestion to clarify with the user.
 
 For each issue category that has problems, present:
 - What the issue is
@@ -354,13 +354,13 @@ Document the user's answer for each metric, as this distinction significantly af
 
 ---
 
-### Step 4: Resolve Unresolved Claude/Codex Disagreements (when manual review is required)
+### Step 4: Resolve Unresolved Executor/Reviewer Disagreements (when manual review is required)
 
 For every item marked `needs_user_decision`, explicitly ask the user to decide.
 
 For each unresolved disagreement, present:
 - The decision topic
-- Claude's position
+- Executor's position
 - Codex's position
 - Tradeoffs and risks of each option
 - A clear recommendation (if one option is materially safer)
@@ -447,7 +447,7 @@ Example: "The implementation includes core feature X with basic validation"
 ## Task Breakdown
 
 Each task must include exactly one routing tag:
-- `coding`: implemented by Claude
+- `coding`: implemented by Codex
 - `analyze`: executed via Codex (`/humanize:ask-codex`)
 
 | Task ID | Description | Target AC | Tag (`coding`/`analyze`) | Depends On |
@@ -455,13 +455,13 @@ Each task must include exactly one routing tag:
 | task1 | <...> | AC-1 | coding | - |
 | task2 | <...> | AC-2 | analyze | task1 |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 
 ### Agreements
 - <Point both sides agree on>
 
 ### Resolved Disagreements
-- <Topic>: Claude vs Codex summary, chosen resolution, and rationale
+- <Topic>: Executor vs Reviewer summary, chosen resolution, and rationale
 
 ### Convergence Status
 - Final Status: `converged` or `partially_converged`
@@ -469,8 +469,8 @@ Each task must include exactly one routing tag:
 ## Pending User Decisions
 
 - DEC-1: <Decision topic>
-  - Claude Position: <...>
-  - Codex Position: <...>
+  - Executor Position: <...>
+  - Reviewer Position: <...>
   - Tradeoff Summary: <...>
   - Decision Status: `PENDING` or `<User's final decision>`
 
@@ -522,9 +522,9 @@ When `alternative_plan_language` is empty, absent, set to `"English"`, or set to
 
 11. **Draft Completeness Requirement**: The generated plan MUST incorporate ALL information from the input draft document without omission. The draft represents the most valuable human input and must be fully preserved. Any clarifications obtained through Phase 6 should be added incrementally to the draft's original content, never replacing or losing any original requirements. The final plan must be a superset of the draft information plus all clarified details.
 
-12. **Debate Traceability**: The plan MUST include Codex-first findings, Claude/Codex agreements, resolved disagreements, and unresolved decisions. Unresolved opposite opinions MUST be recorded in `## Pending User Decisions` for explicit user decision.
+12. **Debate Traceability**: The plan MUST include Codex-first findings, Executor/Reviewer agreements, resolved disagreements, and unresolved decisions. Unresolved opposite opinions MUST be recorded in `## Pending User Decisions` for explicit user decision.
 
-13. **Convergence Requirement**: The plan MUST record Claude/Codex agreements, resolved disagreements, and final convergence status in `## Claude-Codex Deliberation`. Stop only when convergence conditions are met or max rounds reached with explicit carry-over decisions.
+13. **Convergence Requirement**: The plan MUST record Executor/Reviewer agreements, resolved disagreements, and final convergence status in `## Executor-Reviewer Deliberation`. Stop only when convergence conditions are met or max rounds reached with explicit carry-over decisions.
 
 14. **Task Tag Requirement**: The plan MUST include `## Task Breakdown`, and every task MUST be tagged as either `coding` or `analyze` (no untagged tasks, no other tag values).
 
@@ -547,7 +547,7 @@ After updating, **read the complete plan file** and verify:
 - The plan is complete and comprehensive
 - All sections are consistent with each other
 - The structured plan aligns with the original draft content
-- Claude/Codex disagreement handling is explicit and correctly reflected
+- Executor/Reviewer disagreement handling is explicit and correctly reflected
 - No contradictions exist between different parts of the document
 
 If inconsistencies are found, fix them using the Edit tool.
@@ -610,7 +610,7 @@ The `--skip-quiz` flag is passed because the user has already demonstrated under
 If the command invocation is not available in this context, fall back to the setup script:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh" --skip-quiz --plan-file <output-plan-path>
+"${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh" --skip-quiz --plan-file <output-plan-path>
 ```
 
 If the auto-start attempt fails, report the failure reason and provide the exact manual command for the user to run:

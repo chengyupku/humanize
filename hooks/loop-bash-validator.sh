@@ -51,7 +51,7 @@ COMMAND_LOWER=$(to_lower "$COMMAND")
 # Find Active Loops (needed for multiple checks)
 # ========================================
 
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 
 # Extract session_id from hook input for session-aware loop filtering
 HOOK_SESSION_ID=$(extract_session_id "$HOOK_INPUT")
@@ -72,7 +72,7 @@ fi
 # ========================================
 # Block Direct Execution of Hook Scripts
 # ========================================
-# Prevents Claude from manually running stop hook or stop gate scripts.
+# Prevents Codex from manually running stop hook or stop gate scripts.
 # These scripts should only be invoked by the hooks system, not via Bash.
 
 BLOCKED_HOOK_SCRIPTS="(loop-codex-stop-hook\.sh|pr-loop-stop-hook\.sh|rlcr-stop-gate\.sh)"
@@ -153,7 +153,7 @@ if [[ -n "$ACTIVE_LOOP_DIR" ]]; then
 # ========================================
 # Block State File Modifications (All Rounds)
 # ========================================
-# State file is managed by the loop system, not Claude
+# State file is managed by the loop system, not Codex
 # This includes both state.md and finalize-state.md
 # NOTE: Check finalize-state.md FIRST because state\.md pattern also matches finalize-state.md
 # Exception: Allow mv to cancel-state.md when cancel signal file exists
@@ -386,7 +386,7 @@ fi
 # ========================================
 # Block Prompt File Modifications (All Rounds)
 # ========================================
-# Prompt files are read-only - they contain instructions FROM Codex TO Claude
+# Prompt files are read-only - they contain instructions FROM Codex TO Codex
 
 if command_modifies_file "$COMMAND_LOWER" "round-[0-9]+-prompt\.md"; then
     prompt_write_blocked_message >&2

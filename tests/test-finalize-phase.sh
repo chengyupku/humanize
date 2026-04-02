@@ -285,7 +285,7 @@ echo ""
 
 setup_test_repo
 setup_loop_dir 5
-export CLAUDE_PROJECT_DIR="$TEST_DIR"
+export CODEX_PROJECT_DIR="$TEST_DIR"
 
 # Replace state.md with finalize-state.md
 mv "$LOOP_DIR/state.md" "$LOOP_DIR/finalize-state.md"

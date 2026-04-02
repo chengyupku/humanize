@@ -19,8 +19,8 @@ You will receive:
 ## Cross-Agent Review Context
 
 - This agent markdown serves as the prompt specification for BitLesson selection.
-- Runtime execution happens via `scripts/bitlesson-select.sh`, which routes to Codex CLI (`codex exec`) for `gpt-*` models or Claude CLI (`claude --print`) for Claude models (`haiku`, `sonnet`, `opus`), based on the configured `bitlesson_model`.
-- Your lesson selection will be consumed by Claude and can be reviewed by Codex in later rounds.
+- Runtime execution happens via `scripts/bitlesson-select.sh`, which routes to Codex CLI (`codex exec`) based on the configured `bitlesson_model`.
+- Your lesson selection will be consumed by Codex and can be reviewed by a later Codex pass.
 - Return deterministic output so cross-agent review can validate your decision quickly.
 
 ## Decision Rules

@@ -1,12 +1,12 @@
 # Humanize Usage Guide
 
-Detailed usage documentation for the Humanize plugin. For installation, see [Install for Claude Code](install-for-claude.md).
+Detailed usage documentation for the Humanize plugin. For installation, see [Install for Codex Plugin](install-for-codex-plugin.md).
 
 ## How It Works
 
 Humanize creates an iterative feedback loop with two phases:
 
-1. **Implementation Phase**: Claude works on your plan, Codex reviews summaries until COMPLETE
+1. **Implementation Phase**: Codex works on your plan, Codex reviews summaries until COMPLETE
 2. **Review Phase**: `codex review --base <branch>` checks code quality with `[P0-9]` severity markers
 
 The loop continues until all acceptance criteria are met or no issues remain.
@@ -37,7 +37,7 @@ The quiz is advisory, not a gate. You always have the option to proceed. But tha
 ### Skipping the Quiz
 
 - `--skip-quiz` -- Skip the quiz only. The rest of the RLCR loop behaves normally.
-- `--yolo` -- Skip the quiz AND let Claude answer Codex's open questions directly (`--claude-answer-codex`). This is full automation mode for users who have already reviewed the plan and want to hand over complete control.
+- `--yolo` -- Skip the quiz AND let Codex answer Codex's open questions directly (`--codex-answer-review`). This is full automation mode for users who have already reviewed the plan and want to hand over complete control.
 - Plans started via `gen-plan --auto-start-rlcr-if-converged` skip the quiz automatically, because the gen-plan convergence discussion already verified the user's understanding.
 
 ## Typical Planning Flow
@@ -63,7 +63,7 @@ The quiz is advisory, not a gate. You always have the option to proceed. But tha
 | `/cancel-rlcr-loop` | Cancel active loop |
 | `/gen-plan --input <draft.md> --output <plan.md>` | Generate structured plan from draft |
 | `/refine-plan --input <annotated-plan.md>` | Refine an annotated plan and generate a QA ledger |
-| `/start-pr-loop --claude\|--codex` | Start PR review loop with bot monitoring |
+| `/start-pr-loop --codex` | Start PR review loop with bot monitoring |
 | `/cancel-pr-loop` | Cancel active PR loop |
 | `/ask-codex [question]` | One-shot consultation with Codex |
 
@@ -90,13 +90,13 @@ OPTIONS:
                          Full Alignment Checks occur at rounds N-1, 2N-1, 3N-1, etc.
   --skip-impl            Skip implementation phase, go directly to code review
                          Plan file is optional when using this flag
-  --claude-answer-codex  When Codex finds Open Questions, let Claude answer them
+  --codex-answer-review  When Codex finds Open Questions, let Codex answer them
                          directly instead of asking user via AskUserQuestion
-  --agent-teams          Enable Claude Code Agent Teams mode for parallel development.
-                         Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 environment variable.
-                         Claude acts as team leader, splitting tasks among team members.
-  --yolo                 Skip Plan Understanding Quiz and let Claude answer Codex Open
-                         Questions directly. Alias for --skip-quiz --claude-answer-codex.
+  --agent-teams          Enable Codex Agent Teams mode for parallel development.
+                         Requires CODEX_EXPERIMENTAL_AGENT_TEAMS=1 environment variable.
+                         Codex acts as team leader, splitting tasks among team members.
+  --yolo                 Skip Plan Understanding Quiz and let Codex answer Codex Open
+                         Questions directly. Alias for --skip-quiz --codex-answer-review.
   --skip-quiz            Skip the Plan Understanding Quiz only (without other changes).
   -h, --help             Show help message
 ```
@@ -112,7 +112,7 @@ OPTIONS:
   --auto-start-rlcr-if-converged
              Start the RLCR loop automatically when the plan is converged
              (discussion mode only; ignored in --direct)
-  --discussion  Use discussion mode (iterative Claude/Codex convergence rounds)
+  --discussion  Use discussion mode (iterative Codex/Codex convergence rounds)
   --direct      Use direct mode (skip convergence rounds, proceed immediately to plan)
   -h, --help             Show help message
 ```
@@ -212,10 +212,9 @@ translated plan and QA variants by inserting `_<code>` before the file extension
 ### start-pr-loop
 
 ```
-/humanize:start-pr-loop --claude|--codex [OPTIONS]
+/humanize:start-pr-loop --codex [OPTIONS]
 
 BOT FLAGS (at least one required):
-  --claude   Monitor reviews from claude[bot] (trigger with @claude)
   --codex    Monitor reviews from chatgpt-codex-connector[bot] (trigger with @codex)
 
 OPTIONS:
@@ -231,7 +230,7 @@ The PR loop automates the process of handling GitHub PR reviews from remote bots
 
 1. Detects the PR associated with the current branch
 2. Fetches review comments from the specified bot(s)
-3. Claude analyzes and fixes issues identified by the bot(s)
+3. Codex analyzes and fixes issues identified by the bot(s)
 4. Pushes changes and triggers re-review by commenting @bot
 5. Stop Hook polls for new bot reviews (every 30s, 15min timeout per bot)
 6. Local Codex validates if remote concerns are approved or have issues
@@ -317,7 +316,7 @@ Set up the monitoring helper for real-time progress tracking:
 
 ```bash
 # Add to your .bashrc or .zshrc
-source ~/.claude/plugins/cache/humania/humanize/<LATEST.VERSION>/scripts/humanize.sh
+source ~/.executor/plugins/cache/humania/humanize/<LATEST.VERSION>/scripts/humanize.sh
 
 # Monitor RLCR loop progress
 humanize monitor rlcr
@@ -363,9 +362,9 @@ Progress data is stored in `.humanize/rlcr/<timestamp>/` for each loop session.
 
 **Usage example**:
 ```bash
-# Export before starting Claude Code
+# Export before starting Codex
 export HUMANIZE_CODEX_BYPASS_SANDBOX=true
 
 # Or set for a single session
-HUMANIZE_CODEX_BYPASS_SANDBOX=true claude --plugin-dir /path/to/humanize
+HUMANIZE_CODEX_BYPASS_SANDBOX=true codex
 ```

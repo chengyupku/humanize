@@ -826,7 +826,7 @@ MOCK_GIT
     chmod +x "$mock_bin/git"
 
     # Run stop hook with mocked environment
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_output
@@ -839,7 +839,7 @@ MOCK_GIT
         fail "T-E2E-1: Stop hook should block for missing resolve" "block message" "got: $hook_output"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Stop hook detects trigger comment and updates state
@@ -926,7 +926,7 @@ MOCK_GIT
     chmod +x "$mock_bin/git"
 
     # Run stop hook
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Capture stderr for debug messages
@@ -941,7 +941,7 @@ MOCK_GIT
         fail "T-E2E-2: Stop hook should detect trigger" "trigger detected" "got: $hook_stderr"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Stop hook handles paginated API response (multi-page trigger detection)
@@ -1033,7 +1033,7 @@ MOCK_GIT
     chmod +x "$mock_bin/git"
 
     # Run stop hook
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_stderr
@@ -1046,7 +1046,7 @@ MOCK_GIT
         fail "T-E2E-3: Pagination should find trigger on page 2" "trigger detected" "got: $hook_stderr"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Stop hook uses last_trigger_at when present (even for round 0)
@@ -1121,7 +1121,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_stderr
@@ -1138,7 +1138,7 @@ MOCK_GIT
             "got: $hook_stderr"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Run end-to-end tests

@@ -85,7 +85,7 @@ test_path_validation() {
 
     # Run the production script (will fail after path validation
     # because codex isn't available, but we capture validation errors)
-    result=$(CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/scripts/setup-rlcr-loop.sh" "$plan_path" 2>&1) || exit_code=$?
+    result=$(CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/scripts/setup-rlcr-loop.sh" "$plan_path" 2>&1) || exit_code=$?
     exit_code=${exit_code:-0}
 
     # Check for specific path/content validation errors

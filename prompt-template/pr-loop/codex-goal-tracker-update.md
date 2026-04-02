@@ -21,7 +21,7 @@ After completing your analysis, update the goal tracker file at `{{GOAL_TRACKER_
 
 ### Example Goal Tracker Update
 
-If bot "claude" reported 2 new issues and "codex" found 0 issues (approved):
+If bot "codex" reported 2 new issues and local validation found 0 issues:
 
 ```markdown
 ## Issue Summary
@@ -29,7 +29,7 @@ If bot "claude" reported 2 new issues and "codex" found 0 issues (approved):
 | Round | Reviewer | Issues Found | Issues Resolved | Status |
 |-------|----------|--------------|-----------------|--------|
 | 0     | -        | 0            | 0               | Initial |
-| 1     | claude   | 2            | 0               | Issues Found |
+| 1     | codex    | 2            | 0               | Issues Found |
 | 1     | codex    | 0            | 0               | Approved |
 
 ## Total Statistics
@@ -47,7 +47,7 @@ Started: 2026-01-18T10:00:00Z
 Startup Case: 1
 
 ### Round 1
-**claude** found 2 issues:
+**codex** found 2 issues:
 1. Missing error handling in auth.ts
 2. Test coverage below 80%
 

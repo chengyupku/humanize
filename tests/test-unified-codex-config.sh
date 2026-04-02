@@ -165,7 +165,7 @@ else
     printf '{"codex_model": "o3-mini", "codex_effort": "low"}' > "$OVERRIDE_PROJECT/.humanize/config.json"
 
     result=$(bash -c "
-        export CLAUDE_PROJECT_DIR='$OVERRIDE_PROJECT'
+        export CODEX_PROJECT_DIR='$OVERRIDE_PROJECT'
         export XDG_CONFIG_HOME='$TEST_DIR/no-user-config'
         source '$LOOP_COMMON' 2>/dev/null
         echo \"\$DEFAULT_CODEX_MODEL|\$DEFAULT_CODEX_EFFORT\"
@@ -181,7 +181,7 @@ else
     result=$(bash -c "
         export DEFAULT_CODEX_MODEL='preset-model'
         export DEFAULT_CODEX_EFFORT='medium'
-        export CLAUDE_PROJECT_DIR='$OVERRIDE_PROJECT'
+        export CODEX_PROJECT_DIR='$OVERRIDE_PROJECT'
         export XDG_CONFIG_HOME='$TEST_DIR/no-user-config'
         source '$LOOP_COMMON' 2>/dev/null
         echo \"\$DEFAULT_CODEX_MODEL|\$DEFAULT_CODEX_EFFORT\"
@@ -200,7 +200,7 @@ else
     printf '{"codex_model": "haiku!", "codex_effort": "superhigh"}' > "$INVALID_PROJECT/.humanize/config.json"
 
     result=$(bash -c "
-        export CLAUDE_PROJECT_DIR='$INVALID_PROJECT'
+        export CODEX_PROJECT_DIR='$INVALID_PROJECT'
         export XDG_CONFIG_HOME='$TEST_DIR/no-user-config-invalid'
         source '$LOOP_COMMON'
         printf 'RESULT:%s|%s\n' \"\$DEFAULT_CODEX_MODEL\" \"\$DEFAULT_CODEX_EFFORT\"
@@ -228,7 +228,7 @@ else
         printf '{"codex_model": "%s"}' "$invalid_model" > "$INVALID_PROJECT/.humanize/config.json"
 
         result=$(bash -c "
-            export CLAUDE_PROJECT_DIR='$INVALID_PROJECT'
+            export CODEX_PROJECT_DIR='$INVALID_PROJECT'
             export XDG_CONFIG_HOME='$TEST_DIR/no-user-config-invalid-model'
             source '$LOOP_COMMON'
             printf 'RESULT:%s|%s\n' \"\$DEFAULT_CODEX_MODEL\" \"\$DEFAULT_CODEX_EFFORT\"
@@ -356,7 +356,7 @@ agent_teams: false
 CFG_BARE_EOF
 
     result=$(bash -c "
-        export CLAUDE_PROJECT_DIR='$OVERRIDE_PROJECT'
+        export CODEX_PROJECT_DIR='$OVERRIDE_PROJECT'
         export XDG_CONFIG_HOME='$TEST_DIR/no-user-config'
         source '$LOOP_COMMON' 2>/dev/null
         parse_state_file '$TEST_DIR/cfg-bare-state.md'
@@ -404,7 +404,7 @@ else
     printf '{"loop_reviewer_model": "o3-mini", "loop_reviewer_effort": "low", "codex_model": "gpt-5.3"}' > "$STALE_PROJECT/.humanize/config.json"
 
     result=$(bash -c "
-        export CLAUDE_PROJECT_DIR='$STALE_PROJECT'
+        export CODEX_PROJECT_DIR='$STALE_PROJECT'
         export XDG_CONFIG_HOME='$TEST_DIR/no-user-config'
         source '$LOOP_COMMON' 2>/dev/null
         echo \"\$DEFAULT_CODEX_MODEL|\$DEFAULT_CODEX_EFFORT\"
@@ -522,7 +522,7 @@ STUB_EOF
 
     # Run the stop hook with the invalid state
     hook_stderr=$(echo '{"session_id":"hook-test"}' | \
-        CLAUDE_PROJECT_DIR="$HOOK_PROJECT" \
+        CODEX_PROJECT_DIR="$HOOK_PROJECT" \
         CODEX_INVOCATION_LOG="$CODEX_LOG" \
         PATH="$STUB_BIN:$PATH" \
         bash "$STOP_HOOK" 2>&1 >/dev/null) || true
@@ -584,7 +584,7 @@ PLAN_EOF
 
     # Run setup-rlcr-loop.sh with --codex-model override
     setup_exit=0
-    output=$(cd "$EXEC_PROJECT" && CLAUDE_PROJECT_DIR="$EXEC_PROJECT" timeout 30 bash "$SETUP_SCRIPT" --codex-model gpt-5.3:xhigh --base-branch master --track-plan-file plan.md 2>&1) || setup_exit=$?
+    output=$(cd "$EXEC_PROJECT" && CODEX_PROJECT_DIR="$EXEC_PROJECT" timeout 30 bash "$SETUP_SCRIPT" --codex-model gpt-5.3:xhigh --base-branch master --track-plan-file plan.md 2>&1) || setup_exit=$?
 
     assert_eq "setup execution: setup-rlcr-loop.sh exited successfully" \
         "0" "$setup_exit"
@@ -714,7 +714,7 @@ else
 
     result=$(bash -c "
         export DEFAULT_CODEX_EFFORT='medium'
-        export CLAUDE_PROJECT_DIR='$PR_CFG_PROJECT'
+        export CODEX_PROJECT_DIR='$PR_CFG_PROJECT'
         export XDG_CONFIG_HOME='$TEST_DIR/no-user-config'
         source '$LOOP_COMMON' 2>/dev/null
         echo \"\$DEFAULT_CODEX_MODEL|\$DEFAULT_CODEX_EFFORT\"
@@ -792,7 +792,7 @@ else
     printf '{"codex_model": "o3-mini", "codex_effort": "low"}' > "$PR_OVERRIDE_PROJECT/.humanize/config.json"
 
     help_output=$(cd "$PR_OVERRIDE_PROJECT" && \
-        CLAUDE_PROJECT_DIR="$PR_OVERRIDE_PROJECT" \
+        CODEX_PROJECT_DIR="$PR_OVERRIDE_PROJECT" \
         XDG_CONFIG_HOME="$TEST_DIR/no-user-config" \
         timeout 10 bash "$SETUP_PR_LOOP" --help 2>&1) || true
 
@@ -869,7 +869,7 @@ CODEX_MOCK_EOF
         # Run setup-pr-loop.sh with --codex-model override
         pr_setup_exit=0
         pr_output=$(cd "$PR_E2E_PROJECT" && \
-            CLAUDE_PROJECT_DIR="$PR_E2E_PROJECT" \
+            CODEX_PROJECT_DIR="$PR_E2E_PROJECT" \
             XDG_CONFIG_HOME="$TEST_DIR/no-user-config" \
             PATH="$PR_MOCK_BIN:$PATH" \
             timeout 30 bash "$SETUP_PR_LOOP" --claude --codex-model override-model:xhigh 2>&1) || pr_setup_exit=$?
@@ -923,7 +923,7 @@ MOCK_EOF
 
     # Run ask-codex with config-backed defaults (no --codex-model flag)
     ask_stderr=$(cd "$ASK_CFG_PROJECT" && \
-        CLAUDE_PROJECT_DIR="$ASK_CFG_PROJECT" \
+        CODEX_PROJECT_DIR="$ASK_CFG_PROJECT" \
         XDG_CONFIG_HOME="$TEST_DIR/no-user-config" \
         PATH="$MOCK_BIN:$PATH" \
         timeout 30 bash "$ASK_CODEX" "test question" 2>&1 >/dev/null) || true
@@ -943,7 +943,7 @@ MOCK_EOF
 
     # Run ask-codex with --codex-model override
     override_stderr=$(cd "$ASK_CFG_PROJECT" && \
-        CLAUDE_PROJECT_DIR="$ASK_CFG_PROJECT" \
+        CODEX_PROJECT_DIR="$ASK_CFG_PROJECT" \
         XDG_CONFIG_HOME="$TEST_DIR/no-user-config" \
         PATH="$MOCK_BIN:$PATH" \
         timeout 30 bash "$ASK_CODEX" --codex-model override-model:xhigh "test question" 2>&1 >/dev/null) || true

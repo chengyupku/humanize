@@ -41,7 +41,7 @@ echo ""
 echo "Test 1: Valid Edit JSON accepted"
 JSON='{"tool_name":"Edit","tool_input":{"file_path":"/tmp/test.txt","old_string":"foo","new_string":"bar"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -eq 0 ]]; then
@@ -67,7 +67,7 @@ EOF
 
 JSON='{"tool_name":"Edit","tool_input":{"file_path":"'"$TEST_DIR"'/.humanize/rlcr/2026-01-19_00-00-00/state.md","old_string":"1","new_string":"2"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should be blocked - exit code non-zero is sufficient
@@ -82,7 +82,7 @@ echo ""
 echo "Test 3: Edit with malformed JSON handled"
 INVALID_JSON='{"tool_name":"Edit","tool_input":{"file_path":/broken}}'
 set +e
-RESULT=$(echo "$INVALID_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
+RESULT=$(echo "$INVALID_JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -ne 0 ]] && [[ $EXIT_CODE -lt 128 ]]; then
@@ -96,7 +96,7 @@ echo ""
 echo "Test 4: Edit with missing file_path field"
 JSON='{"tool_name":"Edit","tool_input":{"old_string":"foo","new_string":"bar"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should either pass (validator doesn't check this) or fail gracefully
@@ -106,12 +106,12 @@ else
     fail "Missing file_path handling" "exit < 128" "exit $EXIT_CODE"
 fi
 
-# Test 5: Edit with path traversal - paths outside .humanize are allowed (delegated to Claude sandbox)
+# Test 5: Edit with path traversal - paths outside .humanize are allowed (delegated to Codex sandbox)
 echo ""
 echo "Test 5: Edit allows paths outside .humanize (sandbox delegates security)"
 JSON='{"tool_name":"Edit","tool_input":{"file_path":"../../../etc/passwd","old_string":"foo","new_string":"bar"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Paths outside .humanize/rlcr are allowed through - sandbox handles security
@@ -144,7 +144,7 @@ EOF
 # Try to access state.md via path traversal (still within .humanize structure)
 JSON='{"tool_name":"Edit","tool_input":{"file_path":"'"$TEST_DIR"'/.humanize/rlcr/2026-01-19_12-00-00/../2026-01-19_12-00-00/state.md","old_string":"current_round: 1","new_string":"current_round: 999"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # state.md edits are blocked with exit 2
@@ -198,7 +198,7 @@ EOF
 
 JSON='{"tool_name":"Edit","tool_input":{"file_path":"'"$TEST_DIR/plan-test"'/plan.md","old_string":"# Plan","new_string":"# Updated Plan"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/plan-test" bash "$PROJECT_ROOT/hooks/loop-plan-file-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR/plan-test" bash "$PROJECT_ROOT/hooks/loop-plan-file-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Plan file validator outputs JSON with decision: allow/block
@@ -219,7 +219,7 @@ echo ""
 echo "Test 7: Non-plan file passes through"
 JSON='{"tool_name":"Edit","tool_input":{"file_path":"'"$TEST_DIR/plan-test"'/other.txt","old_string":"a","new_string":"b"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/plan-test" bash "$PROJECT_ROOT/hooks/loop-plan-file-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR/plan-test" bash "$PROJECT_ROOT/hooks/loop-plan-file-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Non-plan file should pass through without block decision
@@ -233,7 +233,7 @@ fi
 echo ""
 echo "Test 8: Plan file validator with empty JSON"
 set +e
-RESULT=$(echo '{}' | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-plan-file-validator.sh" 2>&1)
+RESULT=$(echo '{}' | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-plan-file-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -lt 128 ]]; then
@@ -336,7 +336,7 @@ EOF
 # Try to modify state.md - this SHOULD be blocked
 JSON='{"tool_name":"Bash","tool_input":{"command":"echo hacked >> '"$TEST_DIR"'/.humanize/rlcr/2026-01-19_12-00-00/state.md"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # State.md modifications should be blocked with exit 2 and JSON decision: block
@@ -356,7 +356,7 @@ echo "Test 12b: Bash validator blocks goal-tracker.md modification after round 0
 # Try to modify goal-tracker.md when current_round > 0
 JSON='{"tool_name":"Bash","tool_input":{"command":"echo modified >> '"$TEST_DIR"'/.humanize/rlcr/2026-01-19_12-00-00/goal-tracker.md"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Goal tracker modifications after round 0 should be blocked
@@ -371,10 +371,10 @@ echo ""
 echo "Test 12c: Unrelated dangerous commands allowed through (sandbox responsibility)"
 JSON='{"tool_name":"Bash","tool_input":{"command":"cat /tmp/test; rm -rf /"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
-# Unrelated commands pass through - Claude's sandbox handles security
+# Unrelated commands pass through - Codex sandbox handles security
 if [[ $EXIT_CODE -eq 0 ]] && ! echo "$RESULT" | grep -q '"decision".*:.*"block"'; then
     pass "Unrelated commands pass through (sandbox responsibility)"
 else
@@ -387,7 +387,7 @@ echo "Test 13: Edit validator handles newlines in strings"
 # JSON with embedded newlines (valid JSON)
 JSON='{"tool_name":"Edit","tool_input":{"file_path":"/tmp/test.txt","old_string":"line1\\nline2","new_string":"line1\\nline3"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-edit-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -lt 128 ]]; then
@@ -401,7 +401,7 @@ echo ""
 echo "Test 14: Write validator handles binary-looking content"
 JSON='{"tool_name":"Write","tool_input":{"file_path":"/tmp/test.bin","content":"\\x00\\x01\\x02\\x03"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-write-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-write-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -lt 128 ]]; then
@@ -433,7 +433,7 @@ EOF
 for i in $(seq 1 10); do
     JSON='{"tool_name":"Read","tool_input":{"file_path":"/tmp/test'$i'.txt"}}'
     (
-        echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR/concurrent-hooks" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" >/dev/null 2>&1
+        echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR/concurrent-hooks" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" >/dev/null 2>&1
     ) &
 done
 wait
@@ -464,7 +464,7 @@ mkdir -p "$TEST_DIR/no-state"
 # No .humanize directory - should allow exit (no block decision)
 
 set +e
-OUTPUT=$(echo '{}' | CLAUDE_PROJECT_DIR="$TEST_DIR/no-state" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
+OUTPUT=$(echo '{}' | CODEX_PROJECT_DIR="$TEST_DIR/no-state" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should exit 0 (pass through) when no loop is active, with no block decision
@@ -480,7 +480,7 @@ echo "Test 17: PR stop hook allows exit when no state directory"
 mkdir -p "$TEST_DIR/no-pr-state"
 
 set +e
-OUTPUT=$(echo '{}' | CLAUDE_PROJECT_DIR="$TEST_DIR/no-pr-state" bash "$PROJECT_ROOT/hooks/pr-loop-stop-hook.sh" 2>&1)
+OUTPUT=$(echo '{}' | CODEX_PROJECT_DIR="$TEST_DIR/no-pr-state" bash "$PROJECT_ROOT/hooks/pr-loop-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should exit 0, no block decision
@@ -497,7 +497,7 @@ mkdir -p "$TEST_DIR/corrupt-state/.humanize/rlcr/2026-01-19_00-00-00"
 echo "not yaml at all [[[" > "$TEST_DIR/corrupt-state/.humanize/rlcr/2026-01-19_00-00-00/state.md"
 
 set +e
-OUTPUT=$(echo '{}' | CLAUDE_PROJECT_DIR="$TEST_DIR/corrupt-state" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
+OUTPUT=$(echo '{}' | CODEX_PROJECT_DIR="$TEST_DIR/corrupt-state" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should handle gracefully - either block with reason or allow (exit 0 without block)
@@ -534,7 +534,7 @@ plan_tracked: false
 EOF
 
 set +e
-OUTPUT=$(echo '{}' | CLAUDE_PROJECT_DIR="$TEST_DIR/incomplete-state" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
+OUTPUT=$(echo '{}' | CODEX_PROJECT_DIR="$TEST_DIR/incomplete-state" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Missing critical fields causes loop to end as "unexpected" (exit 0, no block)
@@ -601,7 +601,7 @@ MOCKEOF
 chmod +x "$TEST_DIR/mock-bin/codex"
 
 set +e
-OUTPUT=$(echo '{}' | PATH="$TEST_DIR/mock-bin:$PATH" CLAUDE_PROJECT_DIR="$TEST_DIR/active-loop" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
+OUTPUT=$(echo '{}' | PATH="$TEST_DIR/mock-bin:$PATH" CODEX_PROJECT_DIR="$TEST_DIR/active-loop" bash "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Active loop with valid state MUST block exit with decision: block
@@ -625,7 +625,7 @@ echo "Test 19: Large JSON payload handled"
 LARGE_CONTENT=$(head -c 100000 /dev/zero | tr '\0' 'a')
 JSON='{"tool_name":"Write","tool_input":{"file_path":"/tmp/large.txt","content":"'"$LARGE_CONTENT"'"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" run_with_timeout 5 bash "$PROJECT_ROOT/hooks/loop-write-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" run_with_timeout 5 bash "$PROJECT_ROOT/hooks/loop-write-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -lt 128 ]]; then
@@ -639,7 +639,7 @@ echo ""
 echo "Test 20: JSON with escaped null handled"
 JSON='{"tool_name":"Read","tool_input":{"file_path":"/tmp/test\\u0000.txt"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -lt 128 ]]; then
@@ -655,7 +655,7 @@ echo "Test 21: Deeply nested JSON handled"
 NESTED_JSON='{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":{"a":"deep"}}}}}}}}}}'
 JSON='{"tool_name":"Read","tool_input":{"file_path":"/tmp/test.txt","extra":'"$NESTED_JSON"'}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -lt 128 ]]; then

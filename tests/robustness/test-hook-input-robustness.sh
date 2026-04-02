@@ -36,7 +36,7 @@ echo ""
 echo "Test 1: Hook parses well-formed JSON with Read tool"
 JSON='{"tool_name":"Read","tool_input":{"file_path":"/tmp/test.txt"}}'
 # Run read validator - should exit 0 for non-loop paths
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1) || EXIT_CODE=$?
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1) || EXIT_CODE=$?
 EXIT_CODE=${EXIT_CODE:-0}
 if [[ $EXIT_CODE -eq 0 ]]; then
     pass "Read hook passes valid JSON (exit: 0)"
@@ -48,7 +48,7 @@ fi
 echo ""
 echo "Test 2: Hook parses well-formed JSON with Write tool"
 JSON='{"tool_name":"Write","tool_input":{"file_path":"/tmp/test.txt","content":"hello"}}'
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-write-validator.sh" 2>&1) || EXIT_CODE=$?
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-write-validator.sh" 2>&1) || EXIT_CODE=$?
 EXIT_CODE=${EXIT_CODE:-0}
 if [[ $EXIT_CODE -eq 0 ]]; then
     pass "Write hook passes valid JSON (exit: 0)"
@@ -60,7 +60,7 @@ fi
 echo ""
 echo "Test 3: Hook parses well-formed JSON with Bash tool"
 JSON='{"tool_name":"Bash","tool_input":{"command":"echo hello"}}'
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1) || EXIT_CODE=$?
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1) || EXIT_CODE=$?
 EXIT_CODE=${EXIT_CODE:-0}
 if [[ $EXIT_CODE -eq 0 ]]; then
     pass "Bash hook passes valid JSON (exit: 0)"
@@ -74,7 +74,7 @@ echo "Test 4: Hook rejects invalid JSON syntax"
 INVALID_JSON='{"tool_name": "Read", invalid}'
 # The hook should reject invalid JSON and return non-zero exit code
 set +e
-RESULT=$(echo "$INVALID_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$INVALID_JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should reject (non-zero) but not crash with signal
@@ -89,7 +89,7 @@ echo ""
 echo "Test 5: Hook rejects empty JSON object (missing tool_name)"
 EMPTY_JSON='{}'
 set +e
-RESULT=$(echo "$EMPTY_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$EMPTY_JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should reject because tool_name is missing
@@ -104,7 +104,7 @@ echo ""
 echo "Test 6: Hook rejects JSON with missing tool_input.file_path"
 JSON='{"tool_name":"Read"}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should reject because file_path is required for Read tool
@@ -123,7 +123,7 @@ JSON=$(cat <<EOF
 EOF
 )
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -eq 0 ]]; then
@@ -137,7 +137,7 @@ echo ""
 echo "Test 8: Hook handles special characters in command"
 JSON='{"tool_name":"Bash","tool_input":{"command":"echo \"test with special chars: < > & | ; $\""}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -eq 0 ]]; then
@@ -151,7 +151,7 @@ echo ""
 echo "Test 9: Hook handles Unicode characters in JSON"
 JSON='{"tool_name":"Read","tool_input":{"file_path":"/tmp/\u6d4b\u8bd5_\u30c6\u30b9\u30c8_\u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0430.txt"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -eq 0 ]]; then
@@ -165,7 +165,7 @@ echo ""
 echo "Test 10: Hook ignores unrecognized tool names"
 JSON='{"tool_name":"UnknownTool","tool_input":{"path":"/tmp/test"}}'
 set +e
-RESULT=$(echo "$JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 if [[ $EXIT_CODE -eq 0 ]]; then
@@ -188,7 +188,7 @@ for i in $(seq 1 50); do
 done
 NESTED_JSON="${NESTED_JSON}}}"
 set +e
-RESULT=$(echo "$NESTED_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$NESTED_JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Should reject deeply nested JSON (depth > 30) with non-zero exit
@@ -204,7 +204,7 @@ echo "Test 10b: Hook rejects non-UTF8 binary content"
 # Create JSON with embedded binary/non-UTF8 bytes using hex escape
 BINARY_JSON=$(printf '{"tool_name":"Bash","tool_input":{"command":"echo \x80\x81\x82\xff"}}')
 set +e
-RESULT=$(echo "$BINARY_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
+RESULT=$(echo "$BINARY_JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-bash-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Script MUST reject non-UTF8 input with non-zero exit (1 = validation failure)
@@ -223,7 +223,7 @@ echo ""
 echo "Test 10c: Hook handles null bytes gracefully (bash strips them)"
 NULL_JSON=$(printf '{"tool_name":"Read","tool_input":{"file_path":"/tmp/test\x00.txt"}}')
 set +e
-RESULT=$(echo "$NULL_JSON" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
+RESULT=$(echo "$NULL_JSON" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/hooks/loop-read-validator.sh" 2>&1)
 EXIT_CODE=$?
 set -e
 # Bash strips null bytes before our code sees them, so the resulting JSON is valid

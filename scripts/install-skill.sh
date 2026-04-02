@@ -151,7 +151,7 @@ hydrate_skill_runtime_root() {
     done
 }
 
-strip_claude_specific_frontmatter() {
+strip_codex_unsupported_frontmatter() {
     local target_dir="$1"
     local skill
     local skill_file
@@ -162,7 +162,7 @@ strip_claude_specific_frontmatter() {
         [[ -f "$skill_file" ]] || continue
 
         if [[ "$DRY_RUN" == "true" ]]; then
-            log "DRY-RUN strip Claude-specific frontmatter in $skill_file"
+            log "DRY-RUN strip unsupported frontmatter in $skill_file"
             continue
         fi
 
@@ -206,7 +206,7 @@ sync_target() {
     done
     install_runtime_bundle "$target_dir"
     hydrate_skill_runtime_root "$target_dir"
-    strip_claude_specific_frontmatter "$target_dir"
+    strip_codex_unsupported_frontmatter "$target_dir"
 }
 
 while [[ $# -gt 0 ]]; do

@@ -55,7 +55,7 @@ setup_test_env() {
 
     # Create temp directory for tests
     export TEST_TEMP_DIR=$(mktemp -d)
-    export CLAUDE_PROJECT_DIR="$TEST_TEMP_DIR"
+    export CODEX_PROJECT_DIR="$TEST_TEMP_DIR"
 
     # Initialize git repo for tests
     (
@@ -1715,7 +1715,7 @@ MOCK_CODEX
     chmod +x "$mock_bin/codex"
 
     # Run stop hook
-    export CLAUDE_PROJECT_DIR="$test_dir"
+    export CODEX_PROJECT_DIR="$test_dir"
     local old_path="$PATH"
     export PATH="$mock_bin:$PATH"
 
@@ -1723,7 +1723,7 @@ MOCK_CODEX
     hook_output=$(timeout 15 bash -c 'echo "{}" | "$1/hooks/pr-loop-stop-hook.sh" 2>&1' _ "$PROJECT_ROOT" 2>&1) || true
 
     export PATH="$old_path"
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 
     # Verify goal tracker was updated with Round 1 row
     local goal_file="$test_dir/.humanize/pr-loop/2026-01-18_12-00-00/goal-tracker.md"

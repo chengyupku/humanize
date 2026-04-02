@@ -5,7 +5,7 @@
 # Creates state files for the PR loop that monitors GitHub PR reviews from bots.
 #
 # Usage:
-#   setup-pr-loop.sh --claude|--codex [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS]
+#   setup-pr-loop.sh --codex [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS]
 #
 
 set -euo pipefail
@@ -52,7 +52,6 @@ CODEX_EFFORT="$DEFAULT_CODEX_EFFORT"
 CODEX_TIMEOUT="$DEFAULT_CODEX_TIMEOUT"
 
 # Bot flags
-BOT_CLAUDE="false"
 BOT_CODEX="false"
 
 show_help() {
@@ -60,10 +59,9 @@ show_help() {
 start-pr-loop - PR review loop with remote bot monitoring
 
 USAGE:
-  /humanize:start-pr-loop --claude|--codex [OPTIONS]
+  /humanize:start-pr-loop --codex [OPTIONS]
 
-BOT FLAGS (at least one required):
-  --claude   Monitor reviews from claude[bot] (trigger: @claude)
+BOT FLAGS:
   --codex    Monitor reviews from chatgpt-codex-connector[bot] (trigger: @codex)
 
 OPTIONS:
@@ -85,17 +83,15 @@ DESCRIPTION:
   6. Uses local Codex to verify if remote concerns are valid
 
   The flow:
-  1. Claude analyzes PR comments and fixes issues
-  2. Claude pushes changes and comments @bot on PR
+  1. Codex analyzes PR comments and fixes issues
+  2. Codex pushes changes and comments @bot on PR
   3. Stop Hook polls for new bot reviews
   4. When reviews arrive, local Codex validates them
-  5. If issues found, Claude continues fixing
+  5. If issues found, Codex continues fixing
   6. If all bots approve, loop ends
 
 EXAMPLES:
-  /humanize:start-pr-loop --claude
   /humanize:start-pr-loop --codex --max 20
-  /humanize:start-pr-loop --claude --codex
 
 STOPPING:
   - /humanize:cancel-pr-loop   Cancel the active PR loop
@@ -112,10 +108,6 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help)
             show_help
-            ;;
-        --claude)
-            BOT_CLAUDE="true"
-            shift
             ;;
         --codex)
             BOT_CODEX="true"
@@ -177,13 +169,12 @@ done
 # Validate Bot Flags
 # ========================================
 
-if [[ "$BOT_CLAUDE" != "true" && "$BOT_CODEX" != "true" ]]; then
-    echo "Error: At least one bot flag is required" >&2
+if [[ "$BOT_CODEX" != "true" ]]; then
+    echo "Error: --codex is required" >&2
     echo "" >&2
-    echo "Usage: /humanize:start-pr-loop --claude|--codex [OPTIONS]" >&2
+    echo "Usage: /humanize:start-pr-loop --codex [OPTIONS]" >&2
     echo "" >&2
     echo "Bot flags:" >&2
-    echo "  --claude   Monitor reviews from claude[bot] (trigger: @claude)" >&2
     echo "  --codex    Monitor reviews from chatgpt-codex-connector[bot] (trigger: @codex)" >&2
     echo "" >&2
     echo "For help: /humanize:start-pr-loop --help" >&2
@@ -191,13 +182,10 @@ if [[ "$BOT_CLAUDE" != "true" && "$BOT_CODEX" != "true" ]]; then
 fi
 
 # Build active_bots list (stored as array for YAML list format)
-# Bot names stored in state: claude, codex
-# Trigger mentions: @claude, @codex
-# Comment authors: claude[bot], chatgpt-codex-connector[bot]
+# Bot names stored in state: codex
+# Trigger mentions: @codex
+# Comment authors: chatgpt-codex-connector[bot]
 declare -a ACTIVE_BOTS_ARRAY=()
-if [[ "$BOT_CLAUDE" == "true" ]]; then
-    ACTIVE_BOTS_ARRAY+=("claude")
-fi
 if [[ "$BOT_CODEX" == "true" ]]; then
     ACTIVE_BOTS_ARRAY+=("codex")
 fi
@@ -206,7 +194,7 @@ fi
 # Validate Prerequisites
 # ========================================
 
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 
 # loop-common.sh already sourced above (provides find_active_loop, find_active_pr_loop, etc.)
 
@@ -466,7 +454,7 @@ if [[ "$STARTUP_CASE" -eq 4 ]] || [[ "$STARTUP_CASE" -eq 5 ]]; then
 
     # Build regex patterns for bot mentions with word boundary anchoring
     # Pattern: (start|non-username-char) + @botname + (end|non-username-char)
-    # Prevents false matches like @claude-dev or support@codex.io
+    # Prevents false matches like @codex-dev or support@codex.io
     MENTION_PATTERNS_JSON=$(printf '%s\n' "${ACTIVE_BOTS_ARRAY[@]}" | jq -R '"(^|[^a-zA-Z0-9_-])@" + . + "($|[^a-zA-Z0-9_-])"' | jq -s '.')
 
     # Find existing trigger comment that mentions ALL active bots after latest commit
@@ -561,44 +549,6 @@ if [[ "$STARTUP_CASE" -eq 4 ]] || [[ "$STARTUP_CASE" -eq 5 ]]; then
         # will find the trigger comment if LAST_TRIGGER_AT is empty.
     fi
 
-    # If --claude is specified, verify eyes reaction (MANDATORY per plan)
-    if [[ "$BOT_CLAUDE" == "true" ]]; then
-        echo "Verifying Claude eyes reaction (3 attempts x 5 seconds)..." >&2
-
-        if [[ -z "$TRIGGER_COMMENT_ID" ]]; then
-            # Fail if trigger comment ID not found (can't verify eyes without it)
-            echo "Error: Could not find trigger comment ID for eyes verification" >&2
-            echo "" >&2
-            echo "The trigger comment was posted but its ID could not be retrieved." >&2
-            echo "This prevents verification of Claude's eyes reaction." >&2
-            echo "" >&2
-            echo "Please try:" >&2
-            echo "  1. Wait a moment and try again" >&2
-            echo "  2. Check GitHub rate limits" >&2
-            echo "  3. Verify the comment was posted successfully" >&2
-
-            # Clean up the loop directory since we're failing
-            rm -rf "$LOOP_DIR"
-            exit 1
-        fi
-
-        # Check for eyes reaction with retry
-        # Pass --pr for fork PR support (reactions are on base repo)
-        if ! "$SCRIPT_DIR/check-bot-reactions.sh" claude-eyes "$TRIGGER_COMMENT_ID" --pr "$PR_NUMBER" --retry 3 --delay 5 >/dev/null 2>&1; then
-            echo "Error: Claude bot did not respond with eyes reaction" >&2
-            echo "" >&2
-            echo "This may indicate:" >&2
-            echo "  - Claude bot is not configured on this repository" >&2
-            echo "  - Network issues preventing Claude from seeing the mention" >&2
-            echo "" >&2
-            echo "Please verify Claude bot is set up correctly on this repository." >&2
-
-            # Clean up the loop directory since we're failing
-            rm -rf "$LOOP_DIR"
-            exit 1
-        fi
-        echo "Claude eyes reaction confirmed!" >&2
-    fi
 fi
 
 # ========================================

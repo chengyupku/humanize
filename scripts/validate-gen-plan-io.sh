@@ -20,7 +20,7 @@ usage() {
     echo "  --input   Path to the input draft file (required)"
     echo "  --output  Path to the output plan file (required)"
     echo "  --auto-start-rlcr-if-converged  Enable direct RLCR start after converged planning (discussion mode only)"
-    echo "  --discussion  Use discussion mode (iterative Claude/Codex convergence rounds)"
+    echo "  --discussion  Use discussion mode (iterative Codex/Codex convergence rounds)"
     echo "  --direct      Use direct mode (skip convergence rounds, proceed immediately to plan)"
     echo "  -h, --help  Show this help message"
     exit 6
@@ -159,10 +159,10 @@ echo "Input file: $INPUT_FILE ($INPUT_LINE_COUNT lines)"
 echo "Output target: $OUTPUT_FILE"
 echo "IO validation passed."
 
-# Locate template file using CLAUDE_PLUGIN_ROOT (set by Claude Code plugin system)
+# Locate template file using CODEX_PLUGIN_ROOT (set by Codex plugin system)
 # Fallback to script-relative path if environment variable not set
-if [[ -n "${CLAUDE_PLUGIN_ROOT:-}" ]]; then
-    TEMPLATE_FILE="$CLAUDE_PLUGIN_ROOT/prompt-template/plan/gen-plan-template.md"
+if [[ -n "${CODEX_PLUGIN_ROOT:-}" ]]; then
+    TEMPLATE_FILE="$CODEX_PLUGIN_ROOT/prompt-template/plan/gen-plan-template.md"
 else
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
     TEMPLATE_FILE="$SCRIPT_DIR/../prompt-template/plan/gen-plan-template.md"

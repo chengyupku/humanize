@@ -1,0 +1,42 @@
+{
+  "name": "humanize",
+  "version": "1.15.1",
+  "author": {
+    "name": "humania-org",
+    "url": "https://github.com/humania-org"
+  },
+  "description": "Iterative development workflows for Codex with independent review, goal tracking, and PR feedback loops.",
+  "homepage": "https://github.com/humania-org/humanize#readme",
+  "repository": "https://github.com/humania-org/humanize",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "iterative-development",
+    "goal-tracking",
+    "planning",
+    "pr-review",
+    "review-loop"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Humanize",
+    "shortDescription": "Codex workflows for planning, iteration, and review",
+    "longDescription": "Run RLCR implementation loops, generate plans, refine annotated plans, and work through PR review feedback with Codex-first workflows.",
+    "developerName": "humania-org",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/humania-org/humanize",
+    "privacyPolicyURL": "https://github.com/humania-org/humanize",
+    "termsOfServiceURL": "https://github.com/humania-org/humanize/blob/main/LICENSE",
+    "defaultPrompt": [
+      "Start an RLCR loop for my current plan",
+      "Generate a plan from this draft and highlight unresolved decisions",
+      "Refine a commented plan before implementation"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

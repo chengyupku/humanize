@@ -118,7 +118,7 @@ echo ""
 
 # Test 1: Hook passes with valid state
 setup_test_loop
-export CLAUDE_PROJECT_DIR="$TEST_DIR"
+export CODEX_PROJECT_DIR="$TEST_DIR"
 
 echo "Test 1: Hook passes with valid state"
 set +e
@@ -658,7 +658,7 @@ Test goal
 EOF
 # Now modify the tracked plan file (simulate race condition)
 echo "# Modified" >> tracked-plan.md
-export CLAUDE_PROJECT_DIR="$PWD"
+export CODEX_PROJECT_DIR="$PWD"
 set +e
 RESULT=$(echo '{}' | "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
@@ -674,7 +674,7 @@ fi
 echo "Test 13: Stop hook returns JSON block for outdated schema"
 cd "$TEST_DIR"
 setup_test_loop
-export CLAUDE_PROJECT_DIR="$TEST_DIR"
+export CODEX_PROJECT_DIR="$TEST_DIR"
 # Create state without plan_tracked (old schema)
 cat > "$LOOP_DIR/state.md" << 'EOF'
 ---
@@ -761,7 +761,7 @@ GIT_STATUS_CHECK=$(git status --porcelain tracked-plan.md)
 if [[ -n "$GIT_STATUS_CHECK" ]]; then
     fail "Test 14 setup" "clean git status" "git status: $GIT_STATUS_CHECK"
 else
-    export CLAUDE_PROJECT_DIR="$PWD"
+    export CODEX_PROJECT_DIR="$PWD"
     set +e
     RESULT=$(echo '{}' | "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
     EXIT_CODE=$?
@@ -827,7 +827,7 @@ cat > "$LOOP_DIR_14_1/goal-tracker.md" << 'EOF'
 # Goal Tracker
 ## IMMUTABLE SECTION
 ### Ultimate Goal
-[To be extracted from plan by Claude in Round 0]
+[To be extracted from plan by Codex in Round 0]
 ### Acceptance Criteria
 - AC1: Real acceptance criterion
 ## MUTABLE SECTION
@@ -837,7 +837,7 @@ cat > "$LOOP_DIR_14_1/goal-tracker.md" << 'EOF'
 |------|-----------|--------|-------|
 | Task 1 | AC1 | in_progress | Real task |
 EOF
-export CLAUDE_PROJECT_DIR="$PWD"
+export CODEX_PROJECT_DIR="$PWD"
 set +e
 RESULT=$(echo '{}' | "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
@@ -900,7 +900,7 @@ cat > "$LOOP_DIR_14_2/goal-tracker.md" << 'EOF'
 ### Ultimate Goal
 Implement the feature completely
 ### Acceptance Criteria
-[To be defined by Claude in Round 0 based on the plan]
+[To be defined by Codex in Round 0 based on the plan]
 ## MUTABLE SECTION
 ### Plan Version: 1 (Updated: Round 0)
 #### Active Tasks
@@ -908,7 +908,7 @@ Implement the feature completely
 |------|-----------|--------|-------|
 | Task 1 | AC1 | in_progress | Real task |
 EOF
-export CLAUDE_PROJECT_DIR="$PWD"
+export CODEX_PROJECT_DIR="$PWD"
 set +e
 RESULT=$(echo '{}' | "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
@@ -975,9 +975,9 @@ Implement the feature completely
 ## MUTABLE SECTION
 ### Plan Version: 1 (Updated: Round 0)
 #### Active Tasks
-[To be populated by Claude based on plan]
+[To be populated by Codex based on plan]
 EOF
-export CLAUDE_PROJECT_DIR="$PWD"
+export CODEX_PROJECT_DIR="$PWD"
 set +e
 RESULT=$(echo '{}' | "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?
@@ -1038,15 +1038,15 @@ cat > "$LOOP_DIR_14_4/goal-tracker.md" << 'EOF'
 # Goal Tracker
 ## IMMUTABLE SECTION
 ### Ultimate Goal
-[To be extracted from plan by Claude in Round 0]
+[To be extracted from plan by Codex in Round 0]
 ### Acceptance Criteria
-[To be defined by Claude in Round 0 based on the plan]
+[To be defined by Codex in Round 0 based on the plan]
 ## MUTABLE SECTION
 ### Plan Version: 1 (Updated: Round 0)
 #### Active Tasks
-[To be populated by Claude based on plan]
+[To be populated by Codex based on plan]
 EOF
-export CLAUDE_PROJECT_DIR="$PWD"
+export CODEX_PROJECT_DIR="$PWD"
 set +e
 RESULT=$(echo '{}' | "$PROJECT_ROOT/hooks/loop-codex-stop-hook.sh" 2>&1)
 EXIT_CODE=$?

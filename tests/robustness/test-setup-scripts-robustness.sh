@@ -69,9 +69,9 @@ run_rlcr_setup() {
     shift
     (
         cd "$repo_dir"
-        # Set CLAUDE_PROJECT_DIR to isolate from any real active loops
+        # Set CODEX_PROJECT_DIR to isolate from any real active loops
         # Preserve PATH to ensure git/gh/etc are available
-        CLAUDE_PROJECT_DIR="$repo_dir" "$PROJECT_ROOT/scripts/setup-rlcr-loop.sh" "$@"
+        CODEX_PROJECT_DIR="$repo_dir" "$PROJECT_ROOT/scripts/setup-rlcr-loop.sh" "$@"
     )
 }
 
@@ -82,7 +82,7 @@ run_pr_setup() {
     shift
     (
         cd "$repo_dir"
-        CLAUDE_PROJECT_DIR="$repo_dir" "$PROJECT_ROOT/scripts/setup-pr-loop.sh" "$@"
+        CODEX_PROJECT_DIR="$repo_dir" "$PROJECT_ROOT/scripts/setup-pr-loop.sh" "$@"
     )
 }
 

@@ -11,10 +11,10 @@ source "$SCRIPT_DIR/lib/config-loader.sh"
 source "$SCRIPT_DIR/lib/model-router.sh"
 
 PLUGIN_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 MERGED_CONFIG="$(load_merged_config "$PLUGIN_ROOT" "$PROJECT_ROOT")"
 BITLESSON_MODEL="$(get_config_value "$MERGED_CONFIG" "bitlesson_model")"
-BITLESSON_MODEL="${BITLESSON_MODEL:-haiku}"
+BITLESSON_MODEL="${BITLESSON_MODEL:-gpt-5.4}"
 
 # Source portable timeout wrapper
 source "$SCRIPT_DIR/portable-timeout.sh"
@@ -159,26 +159,22 @@ EOF
 )"
 
 # ========================================
-# Run Selector (Codex or Claude)
+# Run selector with Codex
 # ========================================
 
 SELECTOR_TIMEOUT=120
 
 CODEX_EXIT_CODE=0
-if [[ "$BITLESSON_PROVIDER" == "codex" ]]; then
-    CODEX_EXEC_ARGS=("-m" "$BITLESSON_MODEL" "-c" "model_reasoning_effort=high")
+CODEX_EXEC_ARGS=("-m" "$BITLESSON_MODEL" "-c" "model_reasoning_effort=high")
 
-    # Determine automation flag based on environment variable (same as ask-codex.sh)
-    CODEX_AUTO_FLAG="--full-auto"
-    if [[ "${HUMANIZE_CODEX_BYPASS_SANDBOX:-}" == "true" ]] || [[ "${HUMANIZE_CODEX_BYPASS_SANDBOX:-}" == "1" ]]; then
-        CODEX_AUTO_FLAG="--dangerously-bypass-approvals-and-sandbox"
-    fi
-    CODEX_EXEC_ARGS+=("$CODEX_AUTO_FLAG" "-C" "$CODEX_PROJECT_ROOT")
-
-    RAW_OUTPUT="$(printf '%s' "$PROMPT" | run_with_timeout "$SELECTOR_TIMEOUT" codex exec "${CODEX_EXEC_ARGS[@]}" -)" || CODEX_EXIT_CODE=$?
-elif [[ "$BITLESSON_PROVIDER" == "claude" ]]; then
-    RAW_OUTPUT="$(printf '%s' "$PROMPT" | run_with_timeout "$SELECTOR_TIMEOUT" claude --print --model "$BITLESSON_MODEL" -)" || CODEX_EXIT_CODE=$?
+# Determine automation flag based on environment variable (same as ask-codex.sh)
+CODEX_AUTO_FLAG="--full-auto"
+if [[ "${HUMANIZE_CODEX_BYPASS_SANDBOX:-}" == "true" ]] || [[ "${HUMANIZE_CODEX_BYPASS_SANDBOX:-}" == "1" ]]; then
+    CODEX_AUTO_FLAG="--dangerously-bypass-approvals-and-sandbox"
 fi
+CODEX_EXEC_ARGS+=("$CODEX_AUTO_FLAG" "-C" "$CODEX_PROJECT_ROOT")
+
+RAW_OUTPUT="$(printf '%s' "$PROMPT" | run_with_timeout "$SELECTOR_TIMEOUT" codex exec "${CODEX_EXEC_ARGS[@]}" -)" || CODEX_EXIT_CODE=$?
 
 if [[ $CODEX_EXIT_CODE -eq 124 ]]; then
     echo "Error: BitLesson selector timed out after ${SELECTOR_TIMEOUT} seconds" >&2

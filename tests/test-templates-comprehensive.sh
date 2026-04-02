@@ -71,7 +71,7 @@ else
     exit 1
 fi
 
-for subdir in block codex claude; do
+for subdir in block codex executor; do
     if [[ -d "$TEMPLATE_DIR/$subdir" ]]; then
         pass "Subdirectory exists: $subdir/"
     else
@@ -203,7 +203,7 @@ echo "Testing detection of malformed placeholders..."
 
 # Create a temporary test file with various malformed patterns
 TEMP_TEST_DIR=$(mktemp -d)
-mkdir -p "$TEMP_TEST_DIR/block" "$TEMP_TEST_DIR/codex" "$TEMP_TEST_DIR/claude"
+mkdir -p "$TEMP_TEST_DIR/block" "$TEMP_TEST_DIR/codex" "$TEMP_TEST_DIR/executor"
 
 # Test: Extra closing braces
 echo "Testing: {{VAR}}} detection..."
@@ -498,7 +498,7 @@ echo ""
 echo "Testing real template: block/wrong-round-number.md..."
 result=$(load_and_render "$TEMPLATE_DIR" "block/wrong-round-number.md" \
     "ACTION=edit" \
-    "CLAUDE_ROUND=3" \
+    "TARGET_ROUND=3" \
     "FILE_TYPE=summary" \
     "CURRENT_ROUND=5" \
     "CORRECT_PATH=/tmp/round-5-summary.md")

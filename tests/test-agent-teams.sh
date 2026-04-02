@@ -4,7 +4,7 @@
 #
 # Tests cover:
 # - --agent-teams CLI option validation
-# - CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS env var check
+# - CODEX_EXPERIMENTAL_AGENT_TEAMS env var check
 # - agent_teams field in state.md
 # - parse_state_file reads agent_teams
 # - Initial prompt includes team leader instructions
@@ -29,7 +29,7 @@ echo ""
 SETUP_SCRIPT="$SCRIPT_DIR/../scripts/setup-rlcr-loop.sh"
 
 # ========================================
-# Test: --agent-teams fails without CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS
+# Test: --agent-teams fails without CODEX_EXPERIMENTAL_AGENT_TEAMS
 # ========================================
 
 setup_test_dir
@@ -53,7 +53,7 @@ git commit -q -m "Add gitignore"
 
 # Run setup with --agent-teams but WITHOUT env var
 cd "$TEST_DIR/project"
-SETUP_OUTPUT=$(CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS="" CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md 2>&1) || SETUP_EXIT=$?
+SETUP_OUTPUT=$(CODEX_EXPERIMENTAL_AGENT_TEAMS="" CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md 2>&1) || SETUP_EXIT=$?
 
 if [[ "${SETUP_EXIT:-0}" -ne 0 ]]; then
     pass "setup with --agent-teams fails without env var"
@@ -61,20 +61,20 @@ else
     fail "setup with --agent-teams fails without env var" "non-zero exit" "exit 0"
 fi
 
-# Check error message mentions CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS
-if echo "$SETUP_OUTPUT" | grep -qi "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS"; then
-    pass "error message mentions CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS env var"
+# Check error message mentions CODEX_EXPERIMENTAL_AGENT_TEAMS
+if echo "$SETUP_OUTPUT" | grep -qi "CODEX_EXPERIMENTAL_AGENT_TEAMS"; then
+    pass "error message mentions CODEX_EXPERIMENTAL_AGENT_TEAMS env var"
 else
-    fail "error message mentions CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS env var" "env var name in output" "$SETUP_OUTPUT"
+    fail "error message mentions CODEX_EXPERIMENTAL_AGENT_TEAMS env var" "env var name in output" "$SETUP_OUTPUT"
 fi
 
 # Test: --agent-teams rejects non-"1" values like "0" and "false"
 for BAD_VALUE in "0" "false" "yes" "true"; do
-    SETUP_OUTPUT=$(CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS="$BAD_VALUE" CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md 2>&1) || SETUP_EXIT=$?
+    SETUP_OUTPUT=$(CODEX_EXPERIMENTAL_AGENT_TEAMS="$BAD_VALUE" CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md 2>&1) || SETUP_EXIT=$?
     if [[ "${SETUP_EXIT:-0}" -ne 0 ]]; then
-        pass "setup rejects CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=$BAD_VALUE"
+        pass "setup rejects CODEX_EXPERIMENTAL_AGENT_TEAMS=$BAD_VALUE"
     else
-        fail "setup rejects CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=$BAD_VALUE" "non-zero exit" "exit 0"
+        fail "setup rejects CODEX_EXPERIMENTAL_AGENT_TEAMS=$BAD_VALUE" "non-zero exit" "exit 0"
     fi
 done
 
@@ -101,7 +101,7 @@ git add .gitignore
 git commit -q -m "Add gitignore"
 
 cd "$TEST_DIR/project"
-CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md > /dev/null 2>&1 || true
+CODEX_EXPERIMENTAL_AGENT_TEAMS=1 CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md > /dev/null 2>&1 || true
 
 STATE_FILE=$(find "$TEST_DIR/project/.humanize/rlcr" -name "state.md" -type f 2>/dev/null | head -1)
 if [[ -n "$STATE_FILE" ]]; then
@@ -143,7 +143,7 @@ git add .gitignore
 git commit -q -m "Add gitignore"
 
 cd "$TEST_DIR/project"
-CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
+CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
 
 STATE_FILE=$(find "$TEST_DIR/project/.humanize/rlcr" -name "state.md" -type f 2>/dev/null | head -1)
 if [[ -n "$STATE_FILE" ]] && grep -q "^agent_teams: false" "$STATE_FILE"; then
@@ -176,7 +176,7 @@ git add .gitignore
 git commit -q -m "Add gitignore"
 
 cd "$TEST_DIR/project"
-CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
+CODEX_EXPERIMENTAL_AGENT_TEAMS=1 CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
 
 STATE_FILE=$(find "$TEST_DIR/project/.humanize/rlcr" -name "state.md" -type f 2>/dev/null | head -1)
 if [[ -n "$STATE_FILE" ]] && grep -q "^agent_teams: true" "$STATE_FILE"; then
@@ -264,7 +264,7 @@ git add .gitignore
 git commit -q -m "Add gitignore"
 
 cd "$TEST_DIR/project"
-CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md > /dev/null 2>&1 || true
+CODEX_EXPERIMENTAL_AGENT_TEAMS=1 CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" --agent-teams temp/plan.md > /dev/null 2>&1 || true
 
 PROMPT_FILE=$(find "$TEST_DIR/project/.humanize/rlcr" -name "round-0-prompt.md" -type f 2>/dev/null | head -1)
 
@@ -313,7 +313,7 @@ git add .gitignore
 git commit -q -m "Add gitignore"
 
 cd "$TEST_DIR/project"
-CLAUDE_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
+CODEX_PROJECT_DIR="$TEST_DIR/project" bash "$SETUP_SCRIPT" temp/plan.md > /dev/null 2>&1 || true
 
 PROMPT_FILE=$(find "$TEST_DIR/project/.humanize/rlcr" -name "round-0-prompt.md" -type f 2>/dev/null | head -1)
 
@@ -331,7 +331,7 @@ fi
 # Test: agent-teams prompt template files exist
 # ========================================
 
-TEMPLATE_FILE="$SCRIPT_DIR/../prompt-template/claude/agent-teams-instructions.md"
+TEMPLATE_FILE="$SCRIPT_DIR/../prompt-template/executor/agent-teams-instructions.md"
 if [[ -f "$TEMPLATE_FILE" ]]; then
     FILE_SIZE=$(wc -c < "$TEMPLATE_FILE")
     if [[ $FILE_SIZE -ge 50 ]]; then
@@ -347,7 +347,7 @@ fi
 # Test: agent-teams core template file exists (shared guidelines)
 # ========================================
 
-CORE_TEMPLATE="$SCRIPT_DIR/../prompt-template/claude/agent-teams-core.md"
+CORE_TEMPLATE="$SCRIPT_DIR/../prompt-template/executor/agent-teams-core.md"
 if [[ -f "$CORE_TEMPLATE" ]]; then
     FILE_SIZE=$(wc -c < "$CORE_TEMPLATE")
     if [[ $FILE_SIZE -ge 500 ]]; then
@@ -369,7 +369,7 @@ fi
 # Test: agent-teams continue prompt template file exists
 # ========================================
 
-CONTINUE_TEMPLATE="$SCRIPT_DIR/../prompt-template/claude/agent-teams-continue.md"
+CONTINUE_TEMPLATE="$SCRIPT_DIR/../prompt-template/executor/agent-teams-continue.md"
 if [[ -f "$CONTINUE_TEMPLATE" ]]; then
     FILE_SIZE=$(wc -c < "$CONTINUE_TEMPLATE")
     if [[ $FILE_SIZE -ge 200 ]]; then
@@ -578,7 +578,7 @@ CONTINUE"
 
 HOOK_INPUT='{"stop_hook_active": false, "transcript": [], "session_id": ""}'
 set +e
-RESULT=$(echo "$HOOK_INPUT" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$STOP_HOOK" 2>/dev/null)
+RESULT=$(echo "$HOOK_INPUT" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$STOP_HOOK" 2>/dev/null)
 HOOK_EXIT=$?
 set -e
 
@@ -615,7 +615,7 @@ CONTINUE"
 
 HOOK_INPUT='{"stop_hook_active": false, "transcript": [], "session_id": ""}'
 set +e
-RESULT=$(echo "$HOOK_INPUT" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$STOP_HOOK" 2>/dev/null)
+RESULT=$(echo "$HOOK_INPUT" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$STOP_HOOK" 2>/dev/null)
 set -e
 
 NEXT_PROMPT="$LOOP_DIR/round-4-prompt.md"
@@ -640,7 +640,7 @@ setup_mock_codex_review_issues "[P1] Security issue: SQL injection in query buil
 
 HOOK_INPUT='{"stop_hook_active": false, "transcript": [], "session_id": ""}'
 set +e
-RESULT=$(echo "$HOOK_INPUT" | CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$STOP_HOOK" 2>/dev/null)
+RESULT=$(echo "$HOOK_INPUT" | CODEX_PROJECT_DIR="$TEST_DIR" bash "$STOP_HOOK" 2>/dev/null)
 set -e
 
 # In review phase, the prompt is generated by continue_review_loop_with_issues()

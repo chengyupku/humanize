@@ -119,7 +119,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Run stop hook and capture output
@@ -134,7 +134,7 @@ MOCK_GIT
         fail "T-STOPHOOK-1: Should reject old trigger after force push" "block/require trigger" "got: $hook_output"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Step 7 Case 1 exception - no trigger required for startup_case=1, round=0
@@ -222,7 +222,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_stderr
@@ -240,7 +240,7 @@ MOCK_GIT
         fi
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Step 9 - APPROVE creates approve-state.md
@@ -275,7 +275,7 @@ EOF
     # Create resolve file (required by stop hook)
     echo "# Resolution Summary" > "$test_subdir/.humanize/pr-loop/2026-01-18_12-00-00/round-1-pr-resolve.md"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
 
     local mock_bin="$test_subdir/bin"
     mkdir -p "$mock_bin"
@@ -321,7 +321,7 @@ MOCK_GIT
         fi
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Dynamic startup_case update when new comments arrive
@@ -427,7 +427,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Run stop hook with timeout (it may poll, so limit to 5 seconds)
@@ -446,7 +446,7 @@ MOCK_GIT
         fail "T-STOPHOOK-4: startup_case should update dynamically" "case 3" "got: $new_case"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Step 6 - unpushed commits block exit
@@ -519,7 +519,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_output
@@ -532,7 +532,7 @@ MOCK_GIT
         fail "T-STOPHOOK-5: Step 6 should block on unpushed commits" "unpushed/ahead message" "got: $hook_output"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Step 6.5 - force push detection with actual history rewrite simulation
@@ -623,7 +623,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_output
@@ -636,7 +636,7 @@ MOCK_GIT
         fail "T-STOPHOOK-6: Step 6.5 should detect force push" "force push message" "got: $hook_output"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Step 7 - missing trigger comment blocks (Case 4/5)
@@ -735,7 +735,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_output
@@ -748,7 +748,7 @@ MOCK_GIT
         fail "T-STOPHOOK-7: Step 7 should block on missing trigger" "trigger/mention message" "got: $hook_output"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Bot timeout auto-removes bot from active_bots
@@ -844,7 +844,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Run stop hook with short timeout - it should time out and auto-remove bots
@@ -890,7 +890,7 @@ MOCK_GIT
         fail "T-STOPHOOK-8a: approve-state.md should exist after bot timeout" "approve-state.md exists" "file not found"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Codex +1 detection removes codex from active_bots
@@ -990,7 +990,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     local hook_output
@@ -1005,7 +1005,7 @@ MOCK_GIT
         fail "T-STOPHOOK-9: Codex +1 should be detected" "+1/approved message" "got: $hook_output"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Claude eyes timeout blocks exit
@@ -1125,7 +1125,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Run with timeout since eyes check has 3x5s retry (15s total)
@@ -1139,7 +1139,7 @@ MOCK_GIT
         fail "T-STOPHOOK-10: Claude eyes timeout should block" "eyes/timeout message" "got: $hook_output"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Dynamic startup_case update when comments arrive
@@ -1331,7 +1331,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Run stop hook with timeout and capture output for debugging
@@ -1384,7 +1384,7 @@ MOCK_GIT
         fail "T-STOPHOOK-11a: startup_case should be present and changed" "number != 1" "got: empty"
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Fork PR support - stop hook resolves base repo from parent
@@ -1491,7 +1491,7 @@ exit 0
 MOCK_GIT
     chmod +x "$mock_bin/git"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Run stop hook - should resolve PR from parent repo
@@ -1513,7 +1513,7 @@ MOCK_GIT
         fi
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Test: Goal tracker - resolved count stays 0 when some bots have issues
@@ -1701,7 +1701,7 @@ CODEX_OUTPUT
 MOCK_CODEX
     chmod +x "$mock_bin/codex"
 
-    export CLAUDE_PROJECT_DIR="$test_subdir"
+    export CODEX_PROJECT_DIR="$test_subdir"
     export PATH="$mock_bin:$PATH"
 
     # Run stop hook
@@ -1762,7 +1762,7 @@ MOCK_CODEX
         fi
     fi
 
-    unset CLAUDE_PROJECT_DIR
+    unset CODEX_PROJECT_DIR
 }
 
 # Run stop-hook integration tests

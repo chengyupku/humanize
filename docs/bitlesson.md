@@ -14,7 +14,7 @@ The selector reads `bitlesson_model` from the merged config hierarchy:
 Provider routing is automatic:
 
 - `gpt-*`, `o[N]-*` (e.g. `o1-*`, `o3-*`, `o4-*`) route to Codex
-- `claude-*`, `haiku`, `sonnet`, `opus` route to Claude
+- `gpt-*` and `o*` route to Codex
 
 If the configured provider binary is missing, the selector falls back to the default Codex model so the loop can still proceed.
 

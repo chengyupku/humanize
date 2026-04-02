@@ -20,12 +20,7 @@ detect_provider() {
         return 0
     fi
 
-    if printf '%s\n' "$model_name" | grep -qiE '(^claude-)|(haiku|sonnet|opus)'; then
-        echo "claude"
-        return 0
-    fi
-
-    echo "Error: Unknown model name '$model_name'. Expected gpt-*/o[N]-* (Codex) or claude-*/haiku/sonnet/opus (Claude)." >&2
+    echo "Error: Unknown model name '$model_name'. Expected a Codex model name such as gpt-* or o[N]-*." >&2
     return 1
 }
 
@@ -37,11 +32,8 @@ check_provider_dependency() {
         codex)
             binary="codex"
             ;;
-        claude)
-            binary="claude"
-            ;;
         *)
-            echo "Error: Unknown provider '$provider'. Expected 'codex' or 'claude'." >&2
+            echo "Error: Unknown provider '$provider'. Expected 'codex'." >&2
             return 1
             ;;
     esac
@@ -51,11 +43,7 @@ check_provider_dependency() {
     fi
 
     echo "Error: Required binary '$binary' was not found in PATH for provider '$provider'." >&2
-    if [[ "$provider" == "codex" ]]; then
-        echo "Install: https://github.com/openai/codex" >&2
-    else
-        echo "Install Claude Code CLI" >&2
-    fi
+    echo "Install: https://github.com/openai/codex" >&2
     return 1
 }
 
@@ -63,14 +51,10 @@ map_effort() {
     local effort="${1:-}"
     local target_provider="${2:-}"
 
-    case "$target_provider" in
-        codex|claude)
-            ;;
-        *)
-            echo "Error: Unknown target provider '$target_provider'. Expected 'codex' or 'claude'." >&2
-            return 1
-            ;;
-    esac
+    if [[ "$target_provider" != "codex" ]]; then
+        echo "Error: Unknown target provider '$target_provider'. Expected 'codex'." >&2
+        return 1
+    fi
 
     case "$effort" in
         xhigh|high|medium|low)
@@ -80,12 +64,6 @@ map_effort() {
             return 1
             ;;
     esac
-
-    if [[ "$target_provider" == "claude" ]] && [[ "$effort" == "xhigh" ]]; then
-        echo "Info: Mapping effort 'xhigh' to 'high' for provider 'claude'." >&2
-        echo "high"
-        return 0
-    fi
 
     echo "$effort"
 }

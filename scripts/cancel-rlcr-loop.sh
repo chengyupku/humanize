@@ -66,7 +66,7 @@ done
 # Find Loop Directory
 # ========================================
 
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 LOOP_BASE_DIR="$PROJECT_ROOT/.humanize/rlcr"
 
 # Source shared loop library for find_active_loop

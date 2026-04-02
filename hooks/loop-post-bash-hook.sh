@@ -2,7 +2,7 @@
 #
 # PostToolUse Bash Hook for RLCR loop
 #
-# Records the Claude Code session_id into state.md immediately after setup.
+# Records the Codex session_id into state.md immediately after setup.
 # This hook fires right after the setup script's Bash command completes.
 #
 # Mechanism:
@@ -27,7 +27,7 @@ set -euo pipefail
 HOOK_INPUT=$(cat)
 
 # Determine project root
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 
 # Check for pending session_id signal file
 SIGNAL_FILE="$PROJECT_ROOT/.humanize/.pending-session-id"

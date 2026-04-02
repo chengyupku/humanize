@@ -68,7 +68,7 @@ PASS: Plan describes adding a new validation check to the RLCR setup script, whi
 ```
 
 ```
-FAIL_RELEVANCE: Plan describes designing a restaurant menu system, which has no connection to this Claude Code plugin repository.
+FAIL_RELEVANCE: Plan describes designing a restaurant menu system, which has no connection to this Codex plugin repository.
 ```
 
 ```

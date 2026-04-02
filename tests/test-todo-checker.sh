@@ -296,7 +296,7 @@ fi
 # ========================================
 # Test Group 5: New Task System (File-based)
 # ========================================
-# The new Task system reads task state from ~/.claude/tasks/<session_id>/ directory
+# The new Task system reads task state from ~/.executor/tasks/<session_id>/ directory
 # (the authoritative source), NOT from transcript parsing (which causes ghost tasks).
 echo ""
 echo "Test Group 5: New Task System (File-based)"

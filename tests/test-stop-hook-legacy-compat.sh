@@ -126,7 +126,7 @@ run_stop_hook() {
     set +e
     RUN_OUTPUT=$(
         cd "$repo_dir"
-        CLAUDE_PROJECT_DIR="$repo_dir" \
+        CODEX_PROJECT_DIR="$repo_dir" \
         MOCK_CODEX_MARKER="$RUN_MARKER" \
         MOCK_CODEX_OUTPUT="Mock review feedback" \
         "$STOP_HOOK" <<< '{}' 2>&1

@@ -69,7 +69,7 @@ done
 # Find Loop Directory
 # ========================================
 
-PROJECT_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+PROJECT_ROOT="${CODEX_PROJECT_DIR:-$(pwd)}"
 LOOP_BASE_DIR="$PROJECT_ROOT/.humanize/pr-loop"
 
 # Find newest loop directory (different from RLCR - uses pr-loop instead of rlcr)

@@ -178,7 +178,7 @@ fi
 
 if [[ -f "$GEN_PLAN_CMD" ]]; then
     PHASE3_LINE=$(grep -n "## Phase 3: Codex First-Pass Analysis" "$GEN_PLAN_CMD" | head -1 | cut -d: -f1 || true)
-    PHASE4_LINE=$(grep -n "## Phase 4: Claude Candidate Plan (v1)" "$GEN_PLAN_CMD" | head -1 | cut -d: -f1 || true)
+    PHASE4_LINE=$(grep -n "## Phase 4: Executor Candidate Plan (v1)" "$GEN_PLAN_CMD" | head -1 | cut -d: -f1 || true)
     if [[ -n "$PHASE3_LINE" && -n "$PHASE4_LINE" && "$PHASE3_LINE" -lt "$PHASE4_LINE" ]]; then
         pass "gen-plan command orders codex analysis before claude candidate plan"
     else
@@ -186,10 +186,10 @@ if [[ -f "$GEN_PLAN_CMD" ]]; then
     fi
 fi
 
-if [[ -f "$PLAN_TEMPLATE" ]] && grep -q "## Claude-Codex Deliberation" "$PLAN_TEMPLATE"; then
-    pass "plan template includes Claude-Codex deliberation section"
+if [[ -f "$PLAN_TEMPLATE" ]] && grep -q "## Executor-Reviewer Deliberation" "$PLAN_TEMPLATE"; then
+    pass "plan template includes Executor-Reviewer deliberation section"
 else
-    fail "plan template includes Claude-Codex deliberation section" "Claude-Codex Deliberation section" "missing"
+    fail "plan template includes Executor-Reviewer deliberation section" "Executor-Reviewer Deliberation section" "missing"
 fi
 
 if [[ -f "$PLAN_TEMPLATE" ]] && grep -q "## Pending User Decisions" "$PLAN_TEMPLATE"; then
@@ -292,8 +292,8 @@ fi
 # ----------------------------------------
 echo ""
 echo "PT-9: Version consistency check"
-PLUGIN_JSON="$PROJECT_ROOT/.claude-plugin/plugin.json"
-MARKETPLACE_JSON="$PROJECT_ROOT/.claude-plugin/marketplace.json"
+PLUGIN_JSON="$PROJECT_ROOT/.codex-plugin/plugin.json"
+MARKETPLACE_JSON="$PROJECT_ROOT/.agents/plugins/marketplace.json"
 README_MD="$PROJECT_ROOT/README.md"
 
 if [[ -f "$PLUGIN_JSON" ]] && [[ -f "$MARKETPLACE_JSON" ]] && [[ -f "$README_MD" ]]; then

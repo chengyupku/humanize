@@ -150,7 +150,7 @@ echo ""
 echo "Test 8: load_and_render - integration test"
 RESULT=$(load_and_render "$TEMPLATE_DIR" "block/wrong-round-number.md" \
     "ACTION=edit" \
-    "CLAUDE_ROUND=3" \
+    "TARGET_ROUND=3" \
     "FILE_TYPE=summary" \
     "CURRENT_ROUND=5" \
     "CORRECT_PATH=/tmp/round-5-summary.md")

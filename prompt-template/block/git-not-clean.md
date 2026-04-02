@@ -10,7 +10,7 @@ You are trying to stop, but you have **{{GIT_ISSUES}}**.
 
 **Important Rules**:
 - Commit message must follow project conventions
-- AI tools (Claude, Codex, etc.) must NOT have authorship in commits
-- Do NOT include `Co-Authored-By: Claude` or similar AI attribution
+- AI tools (Codex, Codex, etc.) must NOT have authorship in commits
+- Do NOT include `Co-Authored-By: Codex` or similar AI attribution
 
 After committing all changes, you may attempt to exit again.

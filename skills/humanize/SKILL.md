@@ -52,7 +52,7 @@ The RLCR (Ralph-Loop with Codex Review) loop has two phases:
 Automates handling of GitHub PR reviews from remote bots:
 
 1. Detects the PR associated with the current branch
-2. Fetches review comments from specified bot(s) (`--claude` and/or `--codex`)
+2. Fetches review comments from the specified remote reviewer bot (`--codex`)
 3. AI analyzes and fixes issues identified by the bot(s)
 4. Pushes changes and triggers re-review by commenting @bot
 5. Stop Hook polls for new bot reviews (every 30s, 15min timeout per bot)
@@ -95,9 +95,9 @@ Transforms a rough draft document into a structured implementation plan with:
 - `--skip-impl` - Skip implementation phase, go directly to code review
 - `--track-plan-file` - Enforce plan-file immutability when tracked in git
 - `--push-every-round` - Require git push after each round
-- `--claude-answer-codex` - Let Claude answer Codex Open Questions directly (default is AskUserQuestion)
+- `--codex-answer-review` - Let Codex answer Codex Open Questions directly (default is AskUserQuestion)
 - `--agent-teams` - Enable Agent Teams mode
-- `--yolo` - Skip Plan Understanding Quiz and enable --claude-answer-codex
+- `--yolo` - Skip Plan Understanding Quiz and enable --codex-answer-review
 - `--skip-quiz` - Skip the Plan Understanding Quiz only
 
 ### Cancel RLCR Loop
@@ -111,14 +111,8 @@ Transforms a rough draft document into a structured implementation plan with:
 ### Start PR Loop
 
 ```bash
-# Monitor claude[bot] reviews
-"{{HUMANIZE_RUNTIME_ROOT}}/scripts/setup-pr-loop.sh" --claude
-
 # Monitor chatgpt-codex-connector[bot] reviews
 "{{HUMANIZE_RUNTIME_ROOT}}/scripts/setup-pr-loop.sh" --codex
-
-# Monitor both
-"{{HUMANIZE_RUNTIME_ROOT}}/scripts/setup-pr-loop.sh" --claude --codex
 ```
 
 **Common Options:**

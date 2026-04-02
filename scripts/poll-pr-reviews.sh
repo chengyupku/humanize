@@ -60,7 +60,7 @@ OUTPUT:
   - has_new_comments: Boolean indicating if any new comments found
 
 EXAMPLE:
-  poll-pr-reviews.sh 123 --after 2026-01-18T12:00:00Z --bots claude,codex
+  poll-pr-reviews.sh 123 --after 2026-01-18T12:00:00Z --bots codex
 HELP_EOF
             exit 0
             ;;
@@ -161,9 +161,7 @@ fi
 # Build Bot Filter
 # ========================================
 
-# Map bot names to GitHub comment author names:
-# - claude -> claude[bot]
-# - codex -> chatgpt-codex-connector[bot]
+# Map bot names to GitHub comment author names.
 map_bot_to_author() {
     local bot="$1"
     case "$bot" in

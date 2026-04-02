@@ -58,7 +58,7 @@ test_plan_validation() {
 
     # Run the production script, writing output to file
     # Note: Use nohup style to avoid SIGPIPE issues with large output
-    CLAUDE_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/scripts/setup-rlcr-loop.sh" "$plan_path" > "$result_file" 2>&1 </dev/null || exit_code=$?
+    CODEX_PROJECT_DIR="$TEST_DIR" bash "$PROJECT_ROOT/scripts/setup-rlcr-loop.sh" "$plan_path" > "$result_file" 2>&1 </dev/null || exit_code=$?
     exit_code=${exit_code:-0}
 
     # Check for specific plan validation errors

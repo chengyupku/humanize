@@ -55,7 +55,7 @@ base_branch: main
 review_started: false
 ---
 EOF
-    export CLAUDE_PROJECT_DIR="$TEST_DIR"
+    export CODEX_PROJECT_DIR="$TEST_DIR"
 }
 
 # Helper to simulate hook validation

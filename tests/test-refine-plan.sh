@@ -20,18 +20,18 @@ PROMPT_TEMPLATE_DIR="$PROJECT_ROOT/prompt-template/plan"
 SCRIPTS_DIR="$PROJECT_ROOT/scripts"
 SKILLS_DIR="$PROJECT_ROOT/skills"
 DOCS_DIR="$PROJECT_ROOT/docs"
-CLAUDE_PLUGIN_DIR="$PROJECT_ROOT/.claude-plugin"
+CODEX_PLUGIN_DIR="$PROJECT_ROOT/.codex-plugin"
 
 REFINE_PLAN_CMD="$COMMANDS_DIR/refine-plan.md"
 REFINE_PLAN_QA_TEMPLATE="$PROMPT_TEMPLATE_DIR/refine-plan-qa-template.md"
 VALIDATE_SCRIPT="$SCRIPTS_DIR/validate-refine-plan-io.sh"
 REFINE_PLAN_SKILL="$SKILLS_DIR/humanize-refine-plan/SKILL.md"
 INSTALL_SKILL_SCRIPT="$SCRIPTS_DIR/install-skill.sh"
-CLAUDE_INSTALL_DOC="$DOCS_DIR/install-for-claude.md"
+CODEX_PLUGIN_DOC="$DOCS_DIR/install-for-codex-plugin.md"
 CODEX_INSTALL_DOC="$DOCS_DIR/install-for-codex.md"
 KIMI_INSTALL_DOC="$DOCS_DIR/install-for-kimi.md"
-PLUGIN_JSON="$CLAUDE_PLUGIN_DIR/plugin.json"
-MARKETPLACE_JSON="$CLAUDE_PLUGIN_DIR/marketplace.json"
+PLUGIN_JSON="$CODEX_PLUGIN_DIR/plugin.json"
+MARKETPLACE_JSON="$PROJECT_ROOT/.agents/plugins/marketplace.json"
 README_FILE="$PROJECT_ROOT/README.md"
 
 # Colors for output
@@ -183,7 +183,7 @@ Reuse config-loader semantics and keep writes atomic.
 |---------|----|-----|---------|
 | task1 | AC-1 | coding | - |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 ### Convergence Status
 partially_converged
 
@@ -222,7 +222,7 @@ Reuse config-loader semantics and keep writes atomic.
 |---------|----|-----|---------|
 | task1 | AC-1 | coding | - |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 ### Convergence Status
 partially_converged
 
@@ -262,7 +262,7 @@ Reuse config-loader semantics and keep writes atomic.
 |---------|----|-----|---------|
 | task1 | AC-1 | coding | - |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 ### Convergence Status
 partially_converged
 
@@ -318,7 +318,7 @@ Hidden inside a code fence.
 |---------|----|-----|---------|
 | hidden | AC-1 | coding | - |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 ### Convergence Status
 partially_converged
 
@@ -359,7 +359,7 @@ Hidden inside an HTML comment.
 |---------|----|-----|---------|
 | hidden | AC-1 | coding | - |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 ### Convergence Status
 partially_converged
 
@@ -409,7 +409,7 @@ Reuse config-loader semantics and keep writes atomic.
 |---------|----|-----|---------|
 | task1 | AC-1 | coding | - |
 
-## Claude-Codex Deliberation
+## Executor-Reviewer Deliberation
 ### Convergence Status
 partially_converged
 
@@ -667,7 +667,7 @@ if [[ -f "$REFINE_PLAN_CMD" ]]; then
     fi
 
     assert_file_contains "$REFINE_PLAN_CMD" 'argument-hint: "--input <path/to/annotated-plan.md> [--output <path/to/refined-plan.md>] [--qa-dir <path/to/qa-dir>] [--alt-language <language-or-code>] [--discussion|--direct]"' "refine-plan.md exposes expected argument hint"
-    assert_file_contains "$REFINE_PLAN_CMD" '"Bash(${CLAUDE_PLUGIN_ROOT}/scripts/validate-refine-plan-io.sh:*)"' "refine-plan.md allowlist includes validate-refine-plan-io.sh"
+    assert_file_contains "$REFINE_PLAN_CMD" '"Bash(${CODEX_PLUGIN_ROOT}/scripts/validate-refine-plan-io.sh:*)"' "refine-plan.md allowlist includes validate-refine-plan-io.sh"
     assert_file_contains "$REFINE_PLAN_CMD" '"AskUserQuestion"' "refine-plan.md allows AskUserQuestion for discussion mode"
     assert_file_contains "$REFINE_PLAN_CMD" 'hide-from-slash-command-tool: "true"' "refine-plan.md is hidden from slash command tool"
     assert_file_contains "$REFINE_PLAN_CMD" "Read and execute below with ultrathink." "refine-plan.md requires ultrathink execution mode"
@@ -759,13 +759,13 @@ assert_file_contains "$REFINE_PLAN_CMD" "- `## Path Boundaries`" "refine-plan.md
 assert_file_contains "$REFINE_PLAN_CMD" "- `## Feasibility Hints and Suggestions`" "refine-plan.md preserves Feasibility Hints and Suggestions section"
 assert_file_contains "$REFINE_PLAN_CMD" "- `## Dependencies and Sequence`" "refine-plan.md preserves Dependencies and Sequence section"
 assert_file_contains "$REFINE_PLAN_CMD" "- `## Task Breakdown`" "refine-plan.md preserves Task Breakdown section"
-assert_file_contains "$REFINE_PLAN_CMD" "- `## Claude-Codex Deliberation`" "refine-plan.md preserves Claude-Codex Deliberation section"
+assert_file_contains "$REFINE_PLAN_CMD" "- `## Executor-Reviewer Deliberation`" "refine-plan.md preserves Executor-Reviewer Deliberation section"
 assert_file_contains "$REFINE_PLAN_CMD" "- `## Pending User Decisions`" "refine-plan.md preserves Pending User Decisions section"
 assert_file_contains "$REFINE_PLAN_CMD" "- `## Implementation Notes`" "refine-plan.md preserves Implementation Notes section"
 
 echo ""
 echo "PT-8: Alternative language and filename rules"
-assert_file_contains "$REFINE_PLAN_CMD" 'Resolve configuration by following the same precedence and merge semantics defined in `${CLAUDE_PLUGIN_ROOT}/scripts/lib/config-loader.sh`.' "refine-plan.md reuses config-loader merge semantics"
+assert_file_contains "$REFINE_PLAN_CMD" 'Resolve configuration by following the same precedence and merge semantics defined in `${CODEX_PLUGIN_ROOT}/scripts/lib/config-loader.sh`.' "refine-plan.md reuses config-loader merge semantics"
 assert_file_contains "$REFINE_PLAN_CMD" '`CONFIG_ALT_LANGUAGE_RAW` from `alternative_plan_language`' "refine-plan.md reads alternative_plan_language from config"
 assert_file_contains "$REFINE_PLAN_CMD" 'Do not depend on deprecated `chinese_plan`. `refine-plan` only uses `alternative_plan_language`.' "refine-plan.md ignores deprecated chinese_plan"
 assert_file_contains "$REFINE_PLAN_CMD" '1. CLI `--alt-language`' "refine-plan.md prioritizes CLI alt-language"
@@ -831,7 +831,7 @@ else
     fail "install-skill.sh includes humanize-refine-plan in SKILL_NAMES" '"humanize-refine-plan"' "missing from SKILL_NAMES"
 fi
 
-assert_file_contains "$CLAUDE_INSTALL_DOC" "/humanize:refine-plan" "install-for-claude.md mentions refine-plan command"
+assert_file_contains "$CODEX_PLUGIN_DOC" "/humanize:refine-plan" "install-for-codex-plugin.md mentions refine-plan command"
 assert_file_contains "$CODEX_INSTALL_DOC" "humanize-refine-plan" "install-for-codex.md mentions humanize-refine-plan skill"
 assert_file_contains "$KIMI_INSTALL_DOC" "humanize-refine-plan" "install-for-kimi.md mentions humanize-refine-plan skill"
 

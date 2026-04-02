@@ -75,8 +75,8 @@ jobs:
 
           # Files to check
           FILES=(
-            ".claude-plugin/plugin.json"
-            ".claude-plugin/marketplace.json"
+            ".codex-plugin/plugin.json"
+            ".codex-plugin/marketplace.json"
             "README.md"
           )
 
@@ -130,8 +130,8 @@ jobs:
             echo "  - Major: X.Y.Z -> (X+1).0.0"
             echo ""
             echo "Please update version in ALL of these files:"
-            echo "  - .claude-plugin/plugin.json"
-            echo "  - .claude-plugin/marketplace.json"
+            echo "  - .codex-plugin/plugin.json"
+            echo "  - .codex-plugin/marketplace.json"
             echo "  - README.md (Current Version line)"
             echo "========================================"
           else

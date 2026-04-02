@@ -13,7 +13,7 @@
 # is generic session information. Future updates to the Humanize plugin
 # will generally not involve changes to this script.
 #
-# Claude Code Status Line - Display usage information
+# Codex Status Line - Display usage information
 # Format: <model> | [context bar] | $X.XX @ Xh:Ym:Zs
 
 input=$(cat)
@@ -177,13 +177,9 @@ get_session_display() {
     local cwd="$3"
     [[ -z "$sid" ]] && return
 
-    # Resolve project dir name for file lookups
-    local proj_dir_name
-    proj_dir_name=$(echo "$cwd" | sed 's|[/.]|-|g')
-
-    # If transcript_path not provided, construct from project dir and session_id
+    # If transcript_path not provided, try to locate a Codex session transcript by session_id.
     if [[ -z "$transcript" || ! -f "$transcript" ]]; then
-        transcript="$HOME/.claude/projects/${proj_dir_name}/${sid}.jsonl"
+        transcript=$(find "$HOME/.codex/sessions" -type f -name "*${sid}*.jsonl" 2>/dev/null | tail -1)
     fi
 
     # Try transcript jsonl first (grep is faster than jq for large files)
@@ -196,33 +192,16 @@ get_session_display() {
         fi
     fi
 
-    # Fallback: sessions-index.json (for resumed sessions where transcript may differ)
-    local idx_file="$HOME/.claude/projects/${proj_dir_name}/sessions-index.json"
-    if [[ -f "$idx_file" ]]; then
-        local title
-        title=$(jq -r --arg sid "$sid" \
-            '(.entries[] | select(.sessionId == $sid) | .customTitle) // empty' \
-            "$idx_file" 2>/dev/null)
-        if [[ -n "$title" ]]; then
-            echo "$title"
-            return
-        fi
-    fi
-
     # Fallback: full session_id
     echo "$sid"
 }
 
 # Get fast mode status from user settings
 get_fast_mode() {
-    local settings="$HOME/.claude/settings.json"
-    if [[ -f "$settings" ]]; then
-        local val
-        val=$(jq -r '.fastMode // false' "$settings" 2>/dev/null)
-        if [[ "$val" == "true" ]]; then
-            echo "On"
-            return
-        fi
+    local settings="$HOME/.codex/config.toml"
+    if [[ -f "$settings" ]] && grep -q 'approval_policy = "never"' "$settings" 2>/dev/null; then
+        echo "On"
+        return
     fi
     echo "Off"
 }
@@ -326,7 +305,7 @@ CONTEXT_USED=$(printf "%.0f" "$CONTEXT_USED")
 CONTEXT_BAR=$(build_context_bar "$CONTEXT_USED")
 
 # Define colors
-CORAL="\e[38;5;173m"      # Claude branding - for MODEL
+CORAL="\e[38;5;173m"      # Accent color for MODEL
 CYAN="\e[36m"             # Info - for CWD
 YELLOW="\e[33m"           # for BRANCH
 GREEN="\e[32m"            # Positive - for COST and LINES_ADDED
