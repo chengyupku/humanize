@@ -6,7 +6,7 @@ user-invocable: false
 disable-model-invocation: true
 ---
 
-# Humanize Generate Plan
+# Humanize-codex Generate Plan
 
 Transforms a rough draft document into a well-structured implementation plan with clear goals, acceptance criteria (AC-X format), path boundaries, and feasibility suggestions.
 

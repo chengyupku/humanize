@@ -1,10 +1,10 @@
-# Install Humanize for Kimi CLI
+# Install Humanize-codex for Kimi CLI
 
-This guide explains how to install the Humanize skills for [Kimi Code CLI](https://github.com/MoonshotAI/kimi-cli).
+This guide explains how to install the Humanize-codex skills for [Kimi Code CLI](https://github.com/MoonshotAI/kimi-cli).
 
 ## Overview
 
-Humanize provides four Agent Skills for kimi:
+Humanize-codex provides four Agent Skills for kimi:
 
 | Skill | Type | Purpose |
 |-------|------|---------|
@@ -17,7 +17,7 @@ Humanize provides four Agent Skills for kimi:
 
 ### Quick Install (Recommended)
 
-From the Humanize repo root, run:
+From the Humanize-codex repo root, run:
 
 ```bash
 ./scripts/install-skills-kimi.sh
@@ -269,4 +269,4 @@ Ensure these directories are writable.
 - [Kimi CLI Documentation](https://moonshotai.github.io/kimi-cli/)
 - [Agent Skills Format](https://agentskills.io/)
 - [Install for Codex](./install-for-codex.md)
-- [Humanize README](../README.md)
+- [Humanize-codex README](../README.md)

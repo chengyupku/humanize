@@ -1,7 +1,7 @@
 ---
 description: "Start PR review loop with bot monitoring"
 argument-hint: "--codex [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS]"
-allowed-tools: ["Bash(${CODEX_PLUGIN_ROOT}/scripts/setup-pr-loop.sh:*)"]
+allowed-tools: ["Bash(./scripts/setup-pr-loop.sh:*)"]
 ---
 
 # Start PR Loop
@@ -9,7 +9,7 @@ allowed-tools: ["Bash(${CODEX_PLUGIN_ROOT}/scripts/setup-pr-loop.sh:*)"]
 Execute the setup script to initialize the PR review loop:
 
 ```bash
-"${CODEX_PLUGIN_ROOT}/scripts/setup-pr-loop.sh" $ARGUMENTS
+"./scripts/setup-pr-loop.sh" $ARGUMENTS
 ```
 
 This command starts a PR review loop that:

@@ -2,9 +2,9 @@
 description: "Generate implementation plan from draft document"
 argument-hint: "--input <path/to/draft.md> --output <path/to/plan.md> [--auto-start-rlcr-if-converged] [--discussion|--direct]"
 allowed-tools:
-  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/validate-gen-plan-io.sh:*)"
-  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/ask-codex.sh:*)"
-  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh:*)"
+  - "Bash(./scripts/validate-gen-plan-io.sh:*)"
+  - "Bash(./scripts/ask-codex.sh:*)"
+  - "Bash(./scripts/setup-rlcr-loop.sh:*)"
   - "Read"
   - "Glob"
   - "Grep"
@@ -61,14 +61,14 @@ Parse `$ARGUMENTS` and set:
 
 ## Phase 0.5: Load Project Config
 
-After setting execution mode flags, resolve configuration using `${CODEX_PLUGIN_ROOT}/scripts/lib/config-loader.sh`. Reuse that behavior; do not read `.humanize/config.json` directly.
+After setting execution mode flags, resolve configuration using `./scripts/lib/config-loader.sh`. Reuse that behavior; do not read `.humanize/config.json` directly.
 
 ### Config Merge Semantics
 
-1. Source `${CODEX_PLUGIN_ROOT}/scripts/lib/config-loader.sh`.
-2. Call `load_merged_config "${CODEX_PLUGIN_ROOT}" "${PROJECT_ROOT}"` to obtain `MERGED_CONFIG_JSON`, where `PROJECT_ROOT` is the repository root where the command was invoked.
+1. Source `./scripts/lib/config-loader.sh`.
+2. Call `load_merged_config "." "${PROJECT_ROOT}"` to obtain `MERGED_CONFIG_JSON`, where `PROJECT_ROOT` is the repository root where the command was invoked.
 3. `load_merged_config` merges these layers in order:
-   - Required default config: `${CODEX_PLUGIN_ROOT}/config/default_config.json`
+   - Required default config: `./config/default_config.json`
    - Optional user config: `${XDG_CONFIG_HOME:-$HOME/.config}/humanize/config.json`
    - Optional project config: `${HUMANIZE_CONFIG:-$PROJECT_ROOT/.humanize/config.json}`
 4. Later layers override earlier layers. Malformed optional JSON objects are warnings and ignored. A malformed required default config, missing `jq`, or any other fatal `load_merged_config` failure is a configuration error and must stop the command.
@@ -134,7 +134,7 @@ Also detect whether `alternative_plan_language` is explicitly present in `MERGED
 Execute the validation script with the provided arguments:
 
 ```bash
-"${CODEX_PLUGIN_ROOT}/scripts/validate-gen-plan-io.sh" $ARGUMENTS
+"./scripts/validate-gen-plan-io.sh" $ARGUMENTS
 ```
 
 **Handle exit codes:**
@@ -189,7 +189,7 @@ This Codex pass is the first planning analysis before the executor synthesizes p
 
 1. Run:
    ```bash
-   "${CODEX_PLUGIN_ROOT}/scripts/ask-codex.sh" "<structured prompt>"
+   "./scripts/ask-codex.sh" "<structured prompt>"
    ```
 2. The structured prompt MUST include:
    - Repository context (project purpose, relevant files)
@@ -263,7 +263,7 @@ After Executor candidate plan v1 is ready, run iterative challenge/refine rounds
 1. **Second Codex Reasonability Review**
    - Run:
      ```bash
-     "${CODEX_PLUGIN_ROOT}/scripts/ask-codex.sh" "<review current candidate plan>"
+     "./scripts/ask-codex.sh" "<review current candidate plan>"
      ```
    - Prompt MUST include current candidate plan, prior disagreements, and unresolved items
    - Require output format:
@@ -610,7 +610,7 @@ The `--skip-quiz` flag is passed because the user has already demonstrated under
 If the command invocation is not available in this context, fall back to the setup script:
 
 ```bash
-"${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh" --skip-quiz --plan-file <output-plan-path>
+"./scripts/setup-rlcr-loop.sh" --skip-quiz --plan-file <output-plan-path>
 ```
 
 If the auto-start attempt fails, report the failure reason and provide the exact manual command for the user to run:

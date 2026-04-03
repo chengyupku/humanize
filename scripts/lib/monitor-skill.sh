@@ -239,7 +239,7 @@ _humanize_monitor_skill() {
         tput cup 0 0
 
         # Line 1: Title
-        printf "${bg}${bold}%-${term_width}s${reset}${clr_eol}\n" " Humanize Skill Monitor"
+        printf "${bg}${bold}%-${term_width}s${reset}${clr_eol}\n" " Humanize-codex Skill Monitor"
         # Line 2: Aggregate stats
         printf "${cyan}Total:${reset}    ${bold}${total}${reset} invocations"
         [[ "$success" -gt 0 ]] && printf " | ${green}${success} success${reset}"
@@ -294,7 +294,7 @@ _humanize_monitor_skill() {
         local cache_dir=$(_skill_find_cache_dir "$focus_dir")
 
         echo "=========================================="
-        echo " Humanize Skill Monitor"
+        echo " Humanize-codex Skill Monitor"
         echo "=========================================="
         echo ""
         echo "Total Invocations: ${stats[0]}"

@@ -2,7 +2,7 @@
 description: "Refine an annotated implementation plan and generate a QA ledger"
 argument-hint: "--input <path/to/annotated-plan.md> [--output <path/to/refined-plan.md>] [--qa-dir <path/to/qa-dir>] [--alt-language <language-or-code>] [--discussion|--direct]"
 allowed-tools:
-  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/validate-refine-plan-io.sh:*)"
+  - "Bash(./scripts/validate-refine-plan-io.sh:*)"
   - "Read"
   - "Glob"
   - "Grep"
@@ -85,13 +85,13 @@ Scope rules for v1:
 
 ## Phase 0.5: Load Project Config
 
-Resolve configuration by following the same precedence and merge semantics defined in `${CODEX_PLUGIN_ROOT}/scripts/lib/config-loader.sh`. Reuse that behavior; do not invent a separate refine-plan config model.
+Resolve configuration by following the same precedence and merge semantics defined in `./scripts/lib/config-loader.sh`. Reuse that behavior; do not invent a separate refine-plan config model.
 
 ### Config Merge Semantics
 
 Use the same layer order as `load_merged_config`:
 
-1. Required default config: `${CODEX_PLUGIN_ROOT}/config/default_config.json`
+1. Required default config: `./config/default_config.json`
 2. Optional user config: `${XDG_CONFIG_HOME:-$HOME/.config}/humanize/config.json`
 3. Optional project config: `${HUMANIZE_CONFIG:-$PROJECT_ROOT/.humanize/config.json}`
 
@@ -159,7 +159,7 @@ Do not depend on deprecated `chinese_plan`. `refine-plan` only uses `alternative
 Run the validator with the parsed arguments, excluding `--alt-language`:
 
 ```bash
-"${CODEX_PLUGIN_ROOT}/scripts/validate-refine-plan-io.sh" <validated-arguments>
+"./scripts/validate-refine-plan-io.sh" <validated-arguments>
 ```
 
 Handle exit codes exactly:
@@ -441,7 +441,7 @@ If a validation issue can be fixed by reconciling the plan, fix it before contin
 
 ## Phase 6: Generate QA Document
 
-Read `${CODEX_PLUGIN_ROOT}/prompt-template/plan/refine-plan-qa-template.md` and populate it completely. The QA document is not optional.
+Read `./prompt-template/plan/refine-plan-qa-template.md` and populate it completely. The QA document is not optional.
 
 ### QA Content Requirements
 

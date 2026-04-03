@@ -1,6 +1,6 @@
-# Install Humanize Skills for Codex
+# Install Humanize-codex Skills for Codex
 
-This guide explains how to install the Humanize skills for Codex skill runtime (`$CODEX_HOME/skills`).
+This guide explains how to install the Humanize-codex skills for Codex skill runtime (`$CODEX_HOME/skills`).
 
 ## Quick Install (Recommended)
 
@@ -10,7 +10,7 @@ One-line install from anywhere:
 tmp_dir="$(mktemp -d)" && git clone --depth 1 https://github.com/humania-org/humanize.git "$tmp_dir/humanize" && "$tmp_dir/humanize/scripts/install-skills-codex.sh"
 ```
 
-From the Humanize repo root:
+From the Humanize-codex repo root:
 
 ```bash
 ./scripts/install-skills-codex.sh

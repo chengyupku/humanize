@@ -1,5 +1,5 @@
 #!/bin/bash
-# humanize.sh - Humanize shell utilities
+# humanize.sh - Humanize-codex shell utilities
 # Part of rc.d configuration
 # Compatible with both bash and zsh
 
@@ -464,7 +464,7 @@ _humanize_monitor_codex() {
 
         # Move to top and draw directly (no pre-clearing to avoid flicker)
         tput cup 0 0
-        printf "${bg}${bold}%-${term_width}s${reset}${clr_eol}\n" " Humanize Loop Monitor"
+        printf "${bg}${bold}%-${term_width}s${reset}${clr_eol}\n" " Humanize-codex Loop Monitor"
         printf "${cyan}Session Started:${reset} %s${clr_eol}\n" "$start_display"
         # Format full_review_round display (show in parentheses if available)
         local full_review_display=""
@@ -613,7 +613,7 @@ _humanize_monitor_codex() {
         local term_width=$(tput cols)
         local term_height=$(tput lines)
         local min_height=$((status_bar_height + 3))
-        local message="This Humanize Monitor requires at least $min_height lines to work"
+        local message="This Humanize-codex Monitor requires at least $min_height lines to work"
         local msg_len=${#message}
         local center_row=$((term_height / 2))
         local start_col=$(( (term_width - msg_len) / 2 ))

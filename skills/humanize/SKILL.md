@@ -5,9 +5,9 @@ user-invocable: false
 disable-model-invocation: true
 ---
 
-# Humanize - Iterative Development with AI Review
+# Humanize-codex - Iterative Development with AI Review
 
-Humanize creates a feedback loop where AI implements your plan while another AI independently reviews the work, ensuring quality through continuous refinement.
+Humanize-codex creates a feedback loop where AI implements your plan while another AI independently reviews the work, ensuring quality through continuous refinement.
 
 ## Runtime Root
 
@@ -21,7 +21,7 @@ All command examples below use `{{HUMANIZE_RUNTIME_ROOT}}`.
 
 ## Core Philosophy
 
-**Iteration over Perfection**: Instead of expecting perfect output in one shot, Humanize leverages an iterative feedback loop where:
+**Iteration over Perfection**: Instead of expecting perfect output in one shot, Humanize-codex leverages an iterative feedback loop where:
 - AI implements your plan
 - Another AI independently reviews progress
 - Issues are caught and addressed early
@@ -211,7 +211,7 @@ The RLCR loop uses a Goal Tracker to prevent goal drift:
 
 ## Directory Structure
 
-Humanize stores all data in `.humanize/`:
+Humanize-codex stores all data in `.humanize/`:
 
 ```
 .humanize/

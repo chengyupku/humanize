@@ -1,10 +1,10 @@
-# Install Humanize as a Codex Plugin Repo
+# Install Humanize-codex as a Codex Plugin Repo
 
 This repository now ships Codex-facing plugin metadata in [`.codex-plugin/plugin.json`](../.codex-plugin/plugin.json) plus a local marketplace entry in [`.agents/plugins/marketplace.json`](../.agents/plugins/marketplace.json).
 
 ## Recommended Install Path
 
-For normal usage, install the Humanize skills into your Codex runtime:
+For normal usage, install the Humanize-codex skills into your Codex runtime:
 
 ```bash
 ./scripts/install-skills-codex.sh

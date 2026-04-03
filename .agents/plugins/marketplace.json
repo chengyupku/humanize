@@ -10,8 +10,8 @@
         "source": "local",
         "path": "./"
       },
-      "description": "Iterative development workflows for Codex with independent review, goal tracking, and PR feedback loops.",
-      "version": "1.15.1",
+      "description": "Humanize-codex: iterative development workflows for Codex with independent review, goal tracking, and PR feedback loops.",
+      "version": "1.15.3",
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"

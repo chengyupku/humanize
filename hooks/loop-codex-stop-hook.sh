@@ -1126,6 +1126,7 @@ enter_finalize_phase() {
     echo "State file renamed to: $LOOP_DIR/finalize-state.md" >&2
 
     local finalize_summary_file="$LOOP_DIR/finalize-summary.md"
+    local finalize_prompt_file="$LOOP_DIR/finalize-prompt.md"
     local finalize_prompt
 
     if [[ -n "$skip_reason" ]]; then
@@ -1190,6 +1191,8 @@ Focus on the code changes made during this RLCR session. Focus more on changes b
             "BASE_BRANCH=$BASE_BRANCH" \
             "START_BRANCH=$START_BRANCH")
     fi
+
+    printf '%s\n' "$finalize_prompt" > "$finalize_prompt_file"
 
     jq -n \
         --arg reason "$finalize_prompt" \

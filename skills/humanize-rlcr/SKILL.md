@@ -6,7 +6,7 @@ user-invocable: false
 disable-model-invocation: true
 ---
 
-# Humanize RLCR Loop (Hook-Equivalent)
+# Humanize-codex RLCR Loop (Hook-Equivalent)
 
 Use this flow to run RLCR in environments without native hooks.  
 Do not re-implement review logic manually. Always call the RLCR stop gate wrapper:
@@ -38,6 +38,70 @@ Start the loop with the setup script:
 ```
 
 If setup exits non-zero, stop and report the error.
+
+As a convenience wrapper, you may also use:
+
+```bash
+"{{HUMANIZE_RUNTIME_ROOT}}/scripts/start-or-resume-rlcr.sh" $ARGUMENTS
+```
+
+This wrapper starts a new loop when no active RLCR loop exists, or resumes the active loop automatically when one is already in progress. It keeps cycling through:
+- run Codex on the current round/finalize prompt
+- run `rlcr-stop-gate.sh`
+- continue until the loop completes or an infrastructure error occurs
+
+If you only want to inspect the active loop without executing it, use:
+
+```bash
+"{{HUMANIZE_RUNTIME_ROOT}}/scripts/start-or-resume-rlcr.sh" --print-only
+```
+
+### 1.5 Resume After Interruption
+
+If Codex is interrupted mid-loop, do **not** run setup again. Resume the existing loop from the active state directory.
+
+1. Find the active loop directory:
+
+```bash
+loop_dir="$(ls -dt .humanize/rlcr/* 2>/dev/null | head -1)"
+test -n "$loop_dir" || { echo "No RLCR loop found"; exit 1; }
+echo "$loop_dir"
+```
+
+2. Check the loop state:
+- If `"$loop_dir/state.md"` exists, resume the current round.
+- If `"$loop_dir/finalize-state.md"` exists, resume Finalize Phase.
+- If only `cancel-state.md`, `complete-state.md`, or another terminal `*-state.md` exists, do **not** resume; the loop is already closed.
+
+3. Resume a normal round:
+
+```bash
+round="$(sed -n 's/^current_round: //p' "$loop_dir/state.md" | head -1 | tr -d ' ')"
+sed -n '1,240p' "$loop_dir/round-${round}-prompt.md"
+```
+
+Then:
+- continue the implementation work
+- update `"$loop_dir/round-${round}-summary.md"`
+- run the gate again:
+
+```bash
+GATE_CMD=("{{HUMANIZE_RUNTIME_ROOT}}/scripts/rlcr-stop-gate.sh")
+[[ -n "${CODEX_SESSION_ID:-}" ]] && GATE_CMD+=(--session-id "$CODEX_SESSION_ID")
+[[ -n "${CODEX_TRANSCRIPT_PATH:-}" ]] && GATE_CMD+=(--transcript-path "$CODEX_TRANSCRIPT_PATH")
+"${GATE_CMD[@]}"
+```
+
+4. Resume Finalize Phase:
+- read `"$loop_dir/finalize-state.md"` for context
+- update `"$loop_dir/finalize-summary.md"`
+- run the same gate command above
+
+5. Never:
+- rerun `setup-rlcr-loop.sh` while an active loop exists
+- rerun `start-or-resume-rlcr.sh` expecting it to force a new loop while one is already active
+- manually edit `state.md` or `finalize-state.md`
+- skip directly to a later round file
 
 ### 2. Work Round
 

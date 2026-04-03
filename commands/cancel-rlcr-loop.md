@@ -1,6 +1,6 @@
 ---
 description: "Cancel active RLCR loop"
-allowed-tools: ["Bash(${CODEX_PLUGIN_ROOT}/scripts/cancel-rlcr-loop.sh)", "Bash(${CODEX_PLUGIN_ROOT}/scripts/cancel-rlcr-loop.sh --force)", "AskUserQuestion"]
+allowed-tools: ["Bash(./scripts/cancel-rlcr-loop.sh)", "Bash(./scripts/cancel-rlcr-loop.sh --force)", "AskUserQuestion"]
 disable-model-invocation: true
 ---
 
@@ -11,7 +11,7 @@ To cancel the active loop:
 1. Run the cancel script:
 
 ```bash
-"${CODEX_PLUGIN_ROOT}/scripts/cancel-rlcr-loop.sh"
+"./scripts/cancel-rlcr-loop.sh"
 ```
 
 2. Check the first line of output:
@@ -28,7 +28,7 @@ To cancel the active loop:
        1. Label: "Yes, cancel now", Description: "Cancel the loop immediately, finalize-state.md will be renamed to cancel-state.md"
        2. Label: "No, let it finish", Description: "Continue with the Finalize Phase, the loop will complete normally"
    - **If user chooses "Yes, cancel now"**:
-     - Run: `"${CODEX_PLUGIN_ROOT}/scripts/cancel-rlcr-loop.sh" --force`
+     - Run: `"./scripts/cancel-rlcr-loop.sh" --force`
      - Report the cancellation message from the output
    - **If user chooses "No, let it finish"**:
      - Report: "Understood. The Finalize Phase will continue. Once complete, the loop will end normally."

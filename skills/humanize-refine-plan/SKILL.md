@@ -5,7 +5,7 @@ type: flow
 user-invocable: false
 ---
 
-# Humanize Refine Plan
+# Humanize-codex Refine Plan
 
 Refines an annotated plan that contains `CMT:` / `ENDCMT` blocks into a comment-free plan plus a QA ledger, while preserving the `gen-plan` structure and convergence state.
 

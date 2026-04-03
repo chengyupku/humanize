@@ -2,7 +2,7 @@
 description: "Start iterative loop with Codex review"
 argument-hint: "[path/to/plan.md | --plan-file path/to/plan.md] [--max N] [--codex-model MODEL:EFFORT] [--codex-timeout SECONDS] [--track-plan-file] [--push-every-round] [--base-branch BRANCH] [--full-review-round N] [--skip-impl] [--codex-answer-review] [--agent-teams] [--yolo] [--skip-quiz]"
 allowed-tools:
-  - "Bash(${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh:*)"
+  - "Bash(./scripts/setup-rlcr-loop.sh:*)"
   - "Read"
   - "Task"
   - "AskUserQuestion"
@@ -111,7 +111,7 @@ Before running the setup script, verify the user genuinely understands what the 
 If the pre-check passed (or was skipped), and the quiz passed (or was skipped or user chose to proceed), execute the setup script to initialize the loop:
 
 ```bash
-"${CODEX_PLUGIN_ROOT}/scripts/setup-rlcr-loop.sh" $ARGUMENTS
+"./scripts/setup-rlcr-loop.sh" $ARGUMENTS
 ```
 
 This command starts an iterative development loop where:

@@ -1,10 +1,10 @@
-# Humanize Usage Guide
+# Humanize-codex Usage Guide
 
-Detailed usage documentation for the Humanize plugin. For installation, see [Install for Codex Plugin](install-for-codex-plugin.md).
+Detailed usage documentation for the Humanize-codex plugin. For installation, see [Install for Codex Plugin](install-for-codex-plugin.md).
 
 ## How It Works
 
-Humanize creates an iterative feedback loop with two phases:
+Humanize-codex creates an iterative feedback loop with two phases:
 
 1. **Implementation Phase**: Codex works on your plan, Codex reviews summaries until COMPLETE
 2. **Review Phase**: `codex review --base <branch>` checks code quality with `[P0-9]` severity markers
@@ -13,7 +13,7 @@ The loop continues until all acceptance criteria are met or no issues remain.
 
 ## Begin with the End in Mind
 
-Before the RLCR loop starts any work, Humanize runs a **Plan Understanding Quiz** -- a brief pre-flight check that verifies you genuinely understand the plan you are about to execute.
+Before the RLCR loop starts any work, Humanize-codex runs a **Plan Understanding Quiz** -- a brief pre-flight check that verifies you genuinely understand the plan you are about to execute.
 
 ### Why This Exists
 
@@ -30,7 +30,7 @@ When you run `start-rlcr-loop`, an independent agent analyzes the plan and gener
 1. **What components are changing and how?** -- Tests whether you know the core mechanism.
 2. **How do the pieces connect?** -- Tests whether you understand the architecture being modified.
 
-If you answer both correctly, the loop proceeds immediately. If you miss one or both, Humanize explains what the plan actually does and offers a choice: proceed anyway, or stop and review.
+If you answer both correctly, the loop proceeds immediately. If you miss one or both, Humanize-codex explains what the plan actually does and offers a choice: proceed anyway, or stop and review.
 
 The quiz is advisory, not a gate. You always have the option to proceed. But that moment of friction -- the two seconds it takes to read the question and realize you do not know the answer -- is the entire point.
 
@@ -263,7 +263,7 @@ and `metadata.md` for reference.
 
 ## Configuration
 
-Humanize uses a 4-layer config hierarchy (lowest to highest priority):
+Humanize-codex uses a 4-layer config hierarchy (lowest to highest priority):
 1. **Plugin defaults**: `config/default_config.json`
 2. **User config**: `~/.config/humanize/config.json`
 3. **Project config**: `.humanize/config.json`

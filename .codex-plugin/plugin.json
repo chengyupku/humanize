@@ -1,11 +1,11 @@
 {
   "name": "humanize",
-  "version": "1.15.1",
+  "version": "1.15.3",
   "author": {
     "name": "humania-org",
     "url": "https://github.com/humania-org"
   },
-  "description": "Iterative development workflows for Codex with independent review, goal tracking, and PR feedback loops.",
+  "description": "Humanize-codex: iterative development workflows for Codex with independent review, goal tracking, and PR feedback loops.",
   "homepage": "https://github.com/humania-org/humanize#readme",
   "repository": "https://github.com/humania-org/humanize",
   "license": "MIT",
@@ -20,9 +20,9 @@
   "skills": "./skills/",
   "hooks": "./hooks/hooks.json",
   "interface": {
-    "displayName": "Humanize",
+    "displayName": "Humanize-codex",
     "shortDescription": "Codex workflows for planning, iteration, and review",
-    "longDescription": "Run RLCR implementation loops, generate plans, refine annotated plans, and work through PR review feedback with Codex-first workflows.",
+    "longDescription": "Run RLCR implementation loops, generate plans, refine annotated plans, and work through PR review feedback with Humanize-codex Codex-first workflows.",
     "developerName": "humania-org",
     "category": "Coding",
     "capabilities": [
